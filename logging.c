@@ -1,6 +1,7 @@
 //note this file uses different includes than the others, because it's a C file, not C++
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "logging.h"
 #include <stdio.h>
 #include <stdint.h>
