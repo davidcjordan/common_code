@@ -8,6 +8,7 @@
 
 #include <errno.h>
 #include <time.h> //for nanosleep
+#include <sys/time.h> //for CLOCK_... definitions
 
 #include "timer_functions.h"
 
