@@ -1,5 +1,4 @@
 #pragma once
-#include "all_includes.h"
 
 void logging_init();
 
