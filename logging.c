@@ -14,6 +14,7 @@
 #define PREVIOUS_LOG_FILENAME "/run/shm/previous_boomer.log"
 #define LOG_FILE_MAX_BYTES 6000000
 #define LOG_FLUSH_INTERVAL_NANOS 1E9
+//#define TIME_BASED_FFLUSH
 
 FILE *pFile;
 uint64_t previous_flush_timestamp;
@@ -25,6 +26,9 @@ char debug_log[debug_log_length];
 char* debug_log_write_ptr; //points to the next space to write to in the debug log
 const char* debug_log_end_ptr = &debug_log[debug_log_length-1]; //last valid debug log pointer
 bool debug_log_filled = false; //lets us know when the whole log is full of valid data
+
+//prototypes
+void VA_LOG_DEBUG(char * message,va_list ap);
 
 void logging_init(void){
 	debug_log_write_ptr = &debug_log[0];
@@ -106,8 +110,7 @@ void VA_LOG_DEBUG(char * message,va_list ap){ //same as log debug, but takes a v
 	}
 	// write log
 	fprintf(pFile, "%s\n", buf);
-	fflush( pFile );
-	/*
+	#ifdef TIME_BASED_FFLUSH
 	if((counter() - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_NANOS){
 		// time_t t = time(NULL);
 		// struct tm tm = *localtime(&t);
@@ -115,8 +118,11 @@ void VA_LOG_DEBUG(char * message,va_list ap){ //same as log debug, but takes a v
 		fflush( pFile );
 		previous_flush_timestamp = counter();
 	}
-	*/
+	#else
+	fflush( pFile );
 	#endif
+
+	#endif //log to shared memory file
 }
 
 //clears the debug log
