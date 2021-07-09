@@ -7,12 +7,13 @@
 #include <stdint.h>
 #include <stdlib.h> //for exit
 #include <time.h>
+#include "timer_functions.h"
 
 #define LOG_TO_SHM 1
 #define LOG_FILENAME "/run/shm/boomer.log"
 #define PREVIOUS_LOG_FILENAME "/run/shm/previous_boomer.log"
 #define LOG_FILE_MAX_BYTES 6000000
-#define LOG_FLUSH_INTERVAL_MILLIS 1E7
+#define LOG_FLUSH_INTERVAL_MILLIS 10000
 FILE *pFile;
 uint64_t previous_flush_timestamp;
 
@@ -23,18 +24,6 @@ char debug_log[debug_log_length];
 char* debug_log_write_ptr; //points to the next space to write to in the debug log
 const char* debug_log_end_ptr = &debug_log[debug_log_length-1]; //last valid debug log pointer
 bool debug_log_filled = false; //lets us know when the whole log is full of valid data
-
-bool recording = false; //indicates cameras are recording, and launcher is logging simultainiously
-uint64_t record_start_time;
-#include "timer_functions.h"
-// TODO: remove this function and use code_timer; here due to linking problem
-/*
-uint64_t counter(){ //was static, removed
-  struct timespec now;
-  clock_gettime( CLOCK_MONOTONIC_RAW, &now );
-  return (uint64_t)now.tv_sec * UINT64_C(1000000000) + (uint64_t)now.tv_nsec;
-}
-*/
 
 void logging_init(void){
 	debug_log_write_ptr = &debug_log[0];
@@ -48,7 +37,7 @@ void logging_init(void){
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	fprintf(pFile, "==== Log opened at: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	previous_flush_timestamp = counter();
+	previous_flush_timestamp = millis;
 	#endif
 }
 
@@ -116,14 +105,14 @@ void VA_LOG_DEBUG(char * message,va_list ap){ //same as log debug, but takes a v
 	}
 	// write log
 	fprintf(pFile, "%s\n", buf);
-	fflush( pFile );
+	//fflush( pFile );
 
-	if((counter() - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_MILLIS){
-		// time_t t = time(NULL);
-		// struct tm tm = *localtime(&t);
-		// printf("==== flushing at: %02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
+	if((millis - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_MILLIS){
+		time_t t = time(NULL);
+		struct tm tm = *localtime(&t);
+		printf("==== flushing at: %02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
 		fflush( pFile );
-		previous_flush_timestamp = counter();
+		previous_flush_timestamp = millis;
 	}
 	#endif
 }
