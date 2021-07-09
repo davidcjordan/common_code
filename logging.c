@@ -2,11 +2,10 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "logging.h"
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h> //for exit
-#include <time.h>
+#include <time.h> //for timestamping log
+#include "logging.h"
 #include "timer_functions.h"
 
 #define LOG_TO_SHM 1

@@ -18,6 +18,7 @@ uint64_t timing_profile[TIME_PROFILE_POINTS];
 
 void timer_init(){
 	millis = 0;
+	for (int i = 0; i < TIME_PROFILE_POINTS; i++) timing_profile[i] = 0;
 	clock_gettime(CLOCK_MONOTONIC, &millis_start_time);
 }
 
@@ -63,7 +64,7 @@ void dump_timing_profile(){
 			break;
 		}
 		uint64_t dif = timing_profile[i] - timing_profile[i-1];
-		if (dif/1E6 > 128)
+		if (dif/1E9 > 128)
 		{
 			// this should never happen
 			// but it will happen if dump_timing_profile is called before all the entries are filled
