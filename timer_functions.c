@@ -7,10 +7,9 @@
 // This will return the instantanious time in microseconds
 
 #include <errno.h>
-#include <time.h> //for nanosleep
-#include <sys/time.h> //for CLOCK_... definitions
-
+#include <time.h>
 #include "timer_functions.h"
+#include "logging.h"
 
 uint64_t millis = 0; //updated once per cycle. milliseconds since program start
 
@@ -52,7 +51,7 @@ inline void sleepMillis(uint32_t millis) {
 	// while(clock_nanosleep(CLOCK_MONOTONIC, 0, &sleep, &sleep) && errno == EINTR);
 	// clock_nanosleep is recommended per: https://linux.die.net/man/2/nanosleep
 }
-/*
+
 void dump_timing_profile(){
 	LOG_DEBUG("Timing Profile:");
 	for(uint8_t i = 0; i<TIME_PROFILE_POINTS;i++){
@@ -78,4 +77,3 @@ void dump_timing_profile(){
 		else LOG_DEBUG("  %2u-%u: %8fms",i-1,i,(float)dif/1E6);
 	}
 }
-*/

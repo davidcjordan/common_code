@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-uint64_t millis;
+extern uint64_t millis;
 #define TIME_PROFILE_POINTS 20
 extern uint64_t timing_profile[TIME_PROFILE_POINTS]; //used to keep track of the execution time of code segments in real time
 

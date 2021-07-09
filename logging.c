@@ -13,7 +13,8 @@
 #define LOG_FILENAME "/run/shm/boomer.log"
 #define PREVIOUS_LOG_FILENAME "/run/shm/previous_boomer.log"
 #define LOG_FILE_MAX_BYTES 6000000
-#define LOG_FLUSH_INTERVAL_MILLIS 10000
+#define LOG_FLUSH_INTERVAL_NANOS 1E9
+
 FILE *pFile;
 uint64_t previous_flush_timestamp;
 
@@ -37,7 +38,7 @@ void logging_init(void){
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	fprintf(pFile, "==== Log opened at: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	previous_flush_timestamp = millis;
+	previous_flush_timestamp = counter();
 	#endif
 }
 
@@ -105,15 +106,16 @@ void VA_LOG_DEBUG(char * message,va_list ap){ //same as log debug, but takes a v
 	}
 	// write log
 	fprintf(pFile, "%s\n", buf);
-	//fflush( pFile );
-
-	if((millis - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_MILLIS){
-		time_t t = time(NULL);
-		struct tm tm = *localtime(&t);
-		printf("==== flushing at: %02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
+	fflush( pFile );
+	/*
+	if((counter() - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_NANOS){
+		// time_t t = time(NULL);
+		// struct tm tm = *localtime(&t);
+		// printf("==== flushing at: %02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
 		fflush( pFile );
-		previous_flush_timestamp = millis;
+		previous_flush_timestamp = counter();
 	}
+	*/
 	#endif
 }
 
