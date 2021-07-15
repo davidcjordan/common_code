@@ -1,13 +1,10 @@
 #ifndef logging_h
 #define logging_h
 
+#define LOG_PATH "/home/pi/boomer/logs/"
+extern char VERSION_STRING[64];
+
 void logging_init();
-/*
-void LOG_ERROR(char*message,...);
-void LOG_WARNING(char*message,...);
-void LOG_DEBUG(char*message,...);
-void LOG_INFO(char*message,...);
-*/
 
 #define LLOG_FATAL (1)
 #define LLOG_ERROR (2)
