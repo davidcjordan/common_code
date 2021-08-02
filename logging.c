@@ -12,7 +12,7 @@
 #define LOG_FILENAME "/run/shm/boomer.log"
 #define PREVIOUS_LOG_FILENAME "/run/shm/previous_boomer.log"
 #define LOG_FILE_MAX_BYTES 6000000
-#define LOG_FLUSH_INTERVAL_MILLIS 1E7
+#define LOG_FLUSH_INTERVAL_NANOS 2E9
 //#define TIME_BASED_FFLUSH
 
 char VERSION_STRING[64] = {0};
@@ -26,7 +26,7 @@ const char LEVEL_WARN[] = "WARN";
 const char LEVEL_INFO[] = "INFO";
 const char LEVEL_DEBUG[] = "DBUG";
 
-uint32_t current_log_level = 5;
+int current_log_level = 5;
 
 void logging_init(void){
 //	debug_log_write_ptr = &debug_log[0];
@@ -50,6 +50,16 @@ void logging_init(void){
 	previous_flush_timestamp = counter();
 }
 
+void log_flush() {
+	if((counter() - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_NANOS){
+		// time_t t = time(NULL);
+		// struct tm tm = *localtime(&t);
+		// printf("==== flushing at: %02d:%02d:%02d == %llu\n", tm.tm_hour, tm.tm_min, tm.tm_sec,counter());
+		fflush( pFile );
+		previous_flush_timestamp = counter();
+	}
+}
+
 void log_main(int level, const char * filename, int line_num, const char * format, ...) 
 {
 	if (level > current_log_level) return;
@@ -64,7 +74,7 @@ void log_main(int level, const char * filename, int line_num, const char * forma
    struct timespec curTime; struct tm* info; 
    clock_gettime(CLOCK_REALTIME, &curTime); 
    info = localtime(&curTime.tv_sec); 
-   sprintf(info_string, "%d-%02d-%02dT%02d:%02d:%02d.%d_%s_%.10s-L%03d", 1900 + info->tm_year, info->tm_mon, info->tm_mday, \
+   sprintf(info_string, "%d-%02d-%02dT%02d:%02d:%02d.%03d_%s_%.10s-L%03d", 1900 + info->tm_year, info->tm_mon, info->tm_mday, \
       info->tm_hour, info->tm_min, info->tm_sec, (int) (curTime.tv_nsec/1000000), 
 		level_ptr, basename((char * )filename), line_num); 
    
@@ -90,14 +100,6 @@ void log_main(int level, const char * filename, int line_num, const char * forma
 	}
 	fprintf(pFile, "%s>%s\n", info_string, log_string);
 	// fflush( pFile );
-
-	if((counter() - previous_flush_timestamp) > LOG_FLUSH_INTERVAL_MILLIS){
-		// time_t t = time(NULL);
-		// struct tm tm = *localtime(&t);
-		// printf("==== flushing at: %02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
-		fflush( pFile );
-		previous_flush_timestamp = counter();
-	}
 }
 
 void save_debug_log(char*path){
@@ -107,7 +109,7 @@ void save_debug_log(char*path){
 	bool file_write = strcmp(path, "stdout");
 	#define MAX_STDOUT_CHARS 32*1024
 	//limit printf output
-	if (!file_write && log_size > MAX_STDOUT_CHARS) log_size > MAX_STDOUT_CHARS;
+	if (!file_write && log_size > MAX_STDOUT_CHARS) log_size = MAX_STDOUT_CHARS;
 
    //printf("log_start: %d log_end: %d; size: %d\n", log_start_pos, log_end_pos, log_size);
    char buffer[4096*1024];

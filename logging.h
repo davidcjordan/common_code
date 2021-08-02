@@ -5,6 +5,7 @@
 extern char VERSION_STRING[64];
 
 void logging_init();
+void log_flush();
 
 #define LLOG_FATAL (1)
 #define LLOG_ERROR (2)
