@@ -21,7 +21,7 @@ FILE *pFile;
 uint64_t previous_flush_timestamp;
 uint32_t log_start_pos;
 const char LEVEL_FATAL[] = "FATL";
-const char LEVEL_ERROR[] = "INFO";
+const char LEVEL_ERROR[] = "ERRR";
 const char LEVEL_WARN[] = "WARN";
 const char LEVEL_INFO[] = "INFO";
 const char LEVEL_DEBUG[] = "DBUG";
