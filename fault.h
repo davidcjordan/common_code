@@ -20,6 +20,7 @@ typedef struct fault {
 
 void add_fault(char * location, uint32_t code, uint32_t sub_code);
 fault_t * get_fault(uint32_t index);
+void dump_faults();
 
 #define FAULT_TABLE_EMPTY 2
 #define CAM_FAILURE_ON_INIT 1001
