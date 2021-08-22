@@ -5,6 +5,7 @@
 #include <time.h>
 #include "fault.h"
 #include "string.h"
+#include "logging.h"
 
 fault_t fault_table[FAULT_TABLE_LENGTH] = {0};
 
@@ -15,7 +16,7 @@ void add_fault(char * location, uint32_t code, uint32_t sub_code)
    { 
       if (fault_table[i].set == false)
       {
-         printf("Adding fault code %d at index: %d\n", code, i);
+         LOG_DEBUG("Adding fault code %d at index: %d", code, i);
          fault_table[i].set = true;
          if (location) strncpy(fault_table[i].location, location, FAULT_LOCATION_SIZE);
          fault_table[i].code = code;
@@ -25,7 +26,7 @@ void add_fault(char * location, uint32_t code, uint32_t sub_code)
          break;
       }
    }
-   if (!fault_added) printf("fault not added!\n");
+   if (!fault_added) LOG_ERROR("fault %d not added; fault table full!\n", code);
 }
 
 fault_t * get_fault(uint32_t index)
@@ -50,17 +51,16 @@ void dump_faults()
    for (i = 0; i < FAULT_TABLE_LENGTH; i++) if (fault_table[i].set) fault_count++;
    if (fault_count)
    {
-      printf("  Fault Table:\n");
-      printf("    Index,  Code, subC, Timestamp\n");
+      LOG_DEBUG("  Fault Table:");
+      LOG_DEBUG("    Index,  Code, subC, Timestamp");
       for (i = 0; i < FAULT_TABLE_LENGTH; i++)
       {
          if (fault_table[i].set)
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            printf("    FLT %d, %05d, %04d, %s\n", i, fault_table[i].code, fault_table[i].sub_code, buf);
+            LOG_DEBUG("    FLT %d, %05d, %04d, %s\n", i, fault_table[i].code, fault_table[i].sub_code, buf);
          }
       }
-   } else printf("  Fault Table is empty\n");
-   fflush(stdout);
+   } else LOG_DEBUG("  Fault Table is empty");
 }
