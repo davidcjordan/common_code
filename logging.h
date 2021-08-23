@@ -1,7 +1,8 @@
 #ifndef logging_h
 #define logging_h
 
-#define LOG_PATH "/home/pi/boomer/logs/"
+#define BOOMER_DIR "/home/pi/boomer"
+#define LOG_DIR "logs"
 extern char VERSION_STRING[64];
 
 void logging_init();
