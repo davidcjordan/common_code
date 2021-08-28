@@ -28,7 +28,8 @@
 #define CMD_PLAY_SOUND 55 //sends a file name to the remote speaker, the speaker adds it to it's sound queue
 #define CMD_STOP_SOUND 56 //stops sound playback and also clears queue
 #define CMD_GET_IS_PLAYING 57 //returns 1 if sound is playing, 0 otherwise
-#define CMD_IS_PLAYING 58 //this packet is a response to GET_IS_PLAYING
+
+#define CMD_RESTART 86 // use exit(1) so that systemd will restart the process
 
 //#define USE_ENET 1
 #ifdef USE_ENET
