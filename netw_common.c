@@ -14,6 +14,19 @@
 #include "netw_common.h"
 #include "logging.h"
 
+//#define USE_ENET 1
+#ifdef USE_ENET
+const char ADDR_BOOMER[] = "192.168.0.42";
+const char ADDR_LEFT_CAM[] = "192.168.0.43";
+const char ADDR_RIGHT_CAM[] = "192.168.0.44";
+const char ADDR_SPEAKER[] = "192.168.0.46";
+#else
+const char ADDR_BOOMER[] = "192.168.27.2";
+const char ADDR_LEFT_CAM[] = "192.168.27.3";
+const char ADDR_RIGHT_CAM[] = "192.168.27.4";
+const char ADDR_SPEAKER[] = "192.168.27.6";
+#endif
+
 extern int errno;
 
 int sockfd; //used to refer to socket once it's opened
