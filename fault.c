@@ -26,7 +26,7 @@ void add_fault(char * location, uint32_t code, uint32_t sub_code)
          break;
       }
    }
-   if (!fault_added) LOG_ERROR("fault %d not added; fault table full!\n", code);
+   if (!fault_added) LOG_ERROR("fault %d not added; fault table full!", code);
 }
 
 fault_t * get_fault(uint32_t index)
@@ -59,7 +59,7 @@ void dump_faults()
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            LOG_DEBUG("    FLT %d, %05d, %04d, %s\n", i, fault_table[i].code, fault_table[i].sub_code, buf);
+            LOG_DEBUG("    FLT %d, %05d, %04d, %s", i, fault_table[i].code, fault_table[i].sub_code, buf);
          }
       }
    } else LOG_DEBUG("  Fault Table is empty");

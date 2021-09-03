@@ -74,7 +74,7 @@ void log_main(int level, const char * filename, int line_num, const char * forma
    struct timespec curTime; struct tm* info; 
    clock_gettime(CLOCK_REALTIME, &curTime); 
    info = localtime(&curTime.tv_sec); 
-   sprintf(info_string, "%d-%02d-%02dT%02d:%02d:%02d.%03d_%s_%.10s-L%03d", 1900 + info->tm_year, info->tm_mon, info->tm_mday, \
+   sprintf(info_string, "%d-%02d-%02dT%02d:%02d:%02d.%03d_%s_%.10s-L%03d", 1900 + info->tm_year, info->tm_mon+1, info->tm_mday, \
       info->tm_hour, info->tm_min, info->tm_sec, (int) (curTime.tv_nsec/1000000), 
 		level_ptr, basename((char * )filename), line_num); 
    
