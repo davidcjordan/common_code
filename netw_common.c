@@ -149,7 +149,7 @@ void send_packet(uint8_t command_type, uint8_t* data, uint16_t length, const cha
 }
 
 void send_string(uint8_t command_type, char* data, const char address[]){
-	send_packet(command_type,(uint8_t*)data,strlen(data)+1,address);
+	send_packet(command_type,(uint8_t*)data,strlen(data),address);
 }
 
 void dump_net_error_stats()
