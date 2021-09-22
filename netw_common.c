@@ -27,6 +27,8 @@ const char ADDR_RIGHT_CAM[] = "192.168.27.4";
 const char ADDR_SPEAKER[] = "192.168.27.6";
 #endif
 
+uint16_t packet_len;
+
 extern int errno;
 
 int sockfd; //used to refer to socket once it's opened
@@ -119,6 +121,8 @@ void get_packet(){
 		// TODO: add thresholding
    }
 	else if(blen == 0) return;
+	packet_len = blen;
+  	packet[packet_len] = '\0';
 	strcpy(source_ip,  inet_ntoa(si_rcv_from.sin_addr));
 	return;
 }

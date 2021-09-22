@@ -42,6 +42,8 @@ extern const char ADDR_LEFT_CAM[];
 extern const char ADDR_RIGHT_CAM[];
 extern const char ADDR_SPEAKER[];
 
+extern uint16_t packet_len;
+
 bool network_init(); //call once at program start, opens receive port
 void network_close(); //cleans up before exit, closes port
 void get_packet();
