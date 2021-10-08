@@ -1,5 +1,28 @@
 //fault.c
 
+/*
+The fault table is a list of active alarms and when they were set.  It is for use by the equipment operator.
+Adding and deleting faults requires iterating over the entries in the table to find a empty or
+or to find the right fault to clear.
+
+Setting/clearing a fault can occur many times a second, since the detector probably does not have the state
+of whether it is aleady set/cleared.
+
+Instead of the state of whether the fault is set/cleared implemented in every detector, it is implemented in
+the fault code using the fault_index_table.  The fault index table is referenced by the fault_code (an integer).
+This make it fast to detect whether an entry in the fault table has already been created.
+
+The reason to have this fast is because the detectors may check for a condition multiple times a second.
+
+The detcectors will use a macro, e.g. set/clear_fault which will add an entry to the fault_table 
+if it doesn't exist (set_fault) or delete if if it does exist (clear_fault)
+
+Because some of the components of the system have 2 instances (cameras, servo-wheels), then a location integer
+is included in order to not create a duplicate set of faults, For example, there is only one DEVICE_FAILURE_ON_INIT,
+but there are at least 3 instances (2 cameras and a speaker)
+
+*/
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
@@ -7,60 +30,117 @@
 #include "string.h"
 #include "logging.h"
 
-fault_t fault_table[FAULT_TABLE_LENGTH] = {0};
+#define FAULT_TABLE_LENGTH 8
+fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
+fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE] = {0}; //used for fast lookup if fault is active
+const char fault_name[FAULT_INDEX_TABLE_SIZE][64] = {
+								"",
+                        str(DEVICE_FAILURE_ON_INIT),
+                        str(CAM_FAILURE_ON_SET_MODE),
+                        str(CAM_FAILURE_ON_SET_CONTROL),
+                        str(CAM_FAILURE_TO_CAPTURE),
+                        str(CAM_FAILED_PARAMETER_LOAD),
+	                     str(NOT_RECEIVING_FROM_DEVICE),
+	                     str(UNSUPPORTED_COMMAND),
+                     };
 
-void add_fault(char * location, uint32_t code, uint32_t sub_code)
+uint8_t add_fault_entry(uint32_t code, uint8_t loc)
 {
    bool fault_added = false;
-   for (int i = 0; i < FAULT_TABLE_LENGTH; i++)
-   { 
-      if (fault_table[i].set == false)
+   bool dup_fault = false;
+   uint8_t i;
+   // check if fault is already in the table
+   for (i = 1; ((i < FAULT_TABLE_LENGTH) && !dup_fault); i++) 
+   {
+      if ((fault_table[i].set == true) && (fault_table[i].code == code) && (fault_table[i].location == loc) )
       {
-         LOG_DEBUG("Adding fault code %d at index: %d", code, i);
-         fault_table[i].set = true;
-         if (location) strncpy(fault_table[i].location, location, FAULT_LOCATION_SIZE);
-         fault_table[i].code = code;
-         fault_table[i].time = time(NULL);
-         fault_table[i].sub_code = sub_code;
-         fault_added = true;
-         break;
+         LOG_WARNING("Duplicate fault on add: %s, location: %d; fault table index: %d", fault_name[code], loc, i);
+         dup_fault = true;
       }
    }
-   if (!fault_added) LOG_ERROR("fault %d not added; fault table full!", code);
-}
-
-fault_t * get_fault(uint32_t index)
-{
-   int i = index;
-   if (fault_table[i].set == false)
+   if (!dup_fault)
    {
-      //look for a fault is that is set, since indexed fault was not set
-      for (i = 0; i < FAULT_TABLE_LENGTH; i++)
-         if (fault_table[i].set) break;
+      for (i = 1; ((i < FAULT_TABLE_LENGTH) && !fault_added); i++)
+      { 
+         if (fault_table[i].set == false)
+         {
+            LOG_INFO("Adding fault: %s, location: %d; fault table index: %d", fault_name[code], loc, i);
+            printf("Adding fault code: %d, fault string: %s, location: %d; fault table index: %d\n", code, fault_name[code], loc, i);
+            fault_table[i].set = true;
+            fault_table[i].code = code;
+            fault_table[i].location = loc;
+            fault_table[i].time = time(NULL);
+            fault_added = true;
+            fault_index_table[code].location[loc] = i;
+         } 
+      }
+      if (!fault_added) LOG_ERROR("fault %s, location %d not added; fault table full!", fault_name[code], loc);
    }
-   if (fault_table[i].set) return &fault_table[i];
-   else return NULL;
+   return i;
 }
 
-void dump_faults()
+void delete_fault_entry(uint32_t code, uint8_t loc)
 {
    struct tm ts = {0};
    char buf[32];
+   bool fault_deleted = false;
+   int i;
+   for (i = 1; i < FAULT_TABLE_LENGTH && !fault_deleted; i++) 
+   {
+      if ((fault_table[i].set == true) && (fault_table[i].code == code) && (fault_table[i].location == loc) )
+      {
+         ts = *localtime(&fault_table[i].time);
+         strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
+         LOG_INFO("Removing fault: %s, location: %d, time: %s; fault table index: %d", fault_name[code], loc, buf, i);
+         fault_table[i].set = false;
+         fault_table[i].code = 0;
+         fault_index_table[code].location[loc] = 0;
+         fault_deleted = true;
+      }
+   }
+   if (!fault_deleted) LOG_WARNING("Fault code: %d, location: %d not found on delete", code, loc);
+}
+
+void dump_fault_table()
+{
+   struct tm ts = {0};
+   char buf[32];
+   char string[96];
    uint32_t fault_count = 0;
    int i;
-   for (i = 0; i < FAULT_TABLE_LENGTH; i++) if (fault_table[i].set) fault_count++;
+   for (i = 1; i < FAULT_TABLE_LENGTH; i++) if (fault_table[i].set) fault_count++;
    if (fault_count)
    {
-      LOG_DEBUG("  Fault Table:");
-      LOG_DEBUG("    Index,  Code, subC, Timestamp");
-      for (i = 0; i < FAULT_TABLE_LENGTH; i++)
+      sprintf(string, "  Fault Table:");
+      LOG_DEBUG(string); printf("%s\n", string);
+      sprintf(string, "    Index, Code                            , Loc, Timestamp");
+      LOG_DEBUG(string); printf("%s\n", string);
+      for (i = 1; i < FAULT_TABLE_LENGTH; i++)
       {
          if (fault_table[i].set)
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            LOG_DEBUG("    FLT %d, %05d, %04d, %s", i, fault_table[i].code, fault_table[i].sub_code, buf);
+            sprintf(string, "        %d, %-32s,   %d, %s", i, fault_name[fault_table[i].code], fault_table[i].location, buf);
+            LOG_DEBUG(string); printf("%s\n", string);
          }
       }
-   } else LOG_DEBUG("  Fault Table is empty");
+   } else {
+      sprintf(string, "  Fault Table is empty");
+      LOG_DEBUG(string); printf("%s\n", string);
+   }
+}
+
+
+fault_table_entry_t * get_fault(uint32_t index)
+{
+   int i = index;
+   if (fault_table[i].set == false)
+   {
+      //look for a fault is that is set, since indexed fault was not set
+      for (i = 1; i < FAULT_TABLE_LENGTH; i++)
+         if (fault_table[i].set) break;
+   }
+   if (fault_table[i].set) return &fault_table[i];
+   else return NULL;
 }
