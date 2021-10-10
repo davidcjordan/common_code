@@ -30,31 +30,30 @@ but there are at least 3 instances (2 cameras and a speaker)
 #include "string.h"
 #include "logging.h"
 
-#define FAULT_TABLE_LENGTH 8
+#define FAULT_TABLE_LENGTH 16
 fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
 fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE] = {0}; //used for fast lookup if fault is active
-const char fault_name[FAULT_INDEX_TABLE_SIZE][64] = {
-								"",
-                        str(DEVICE_FAILURE_ON_INIT),
-                        str(CAM_FAILURE_ON_SET_MODE),
-                        str(CAM_FAILURE_ON_SET_CONTROL),
-                        str(CAM_FAILURE_TO_CAPTURE),
-                        str(CAM_FAILED_PARAMETER_LOAD),
-	                     str(NOT_RECEIVING_FROM_DEVICE),
-	                     str(UNSUPPORTED_COMMAND),
-                     };
 
-uint8_t add_fault_entry(uint32_t code, uint8_t loc)
+
+uint8_t add_fault_entry(uint32_t code, uint8_t loc, char * xtra)
 {
    bool fault_added = false;
    bool dup_fault = false;
+   if (code >= FAULT_END) {
+      LOG_ERROR("Out-of-range fault code: %d; highest code is: %d", code, FAULT_END);
+      return 0;
+   }
+   if (loc > FAULT_LOCATIONS) {
+      LOG_ERROR("Out-of-range fault location: %d; highest location is: %d", loc, FAULT_LOCATIONS);
+      return 0;
+   }
    uint8_t i;
    // check if fault is already in the table
    for (i = 1; ((i < FAULT_TABLE_LENGTH) && !dup_fault); i++) 
    {
       if ((fault_table[i].set == true) && (fault_table[i].code == code) && (fault_table[i].location == loc) )
       {
-         LOG_WARNING("Duplicate fault on add: %s, location: %d; fault table index: %d", fault_name[code], loc, i);
+         LOG_WARNING("Duplicate fault on add: %s, location: %d; fault table index: %d", FAULT_STRING[code], loc, i);
          dup_fault = true;
       }
    }
@@ -64,17 +63,18 @@ uint8_t add_fault_entry(uint32_t code, uint8_t loc)
       { 
          if (fault_table[i].set == false)
          {
-            LOG_INFO("Adding fault: %s, location: %d; fault table index: %d", fault_name[code], loc, i);
-            printf("Adding fault code: %d, fault string: %s, location: %d; fault table index: %d\n", code, fault_name[code], loc, i);
+            LOG_INFO("Adding fault: %s, location: %d; fault table index: %d", FAULT_STRING[code], loc, i);
             fault_table[i].set = true;
             fault_table[i].code = code;
             fault_table[i].location = loc;
             fault_table[i].time = time(NULL);
+            fault_table[i].xtra_info[0] = '\0';
+            if (xtra != NULL) strncpy(fault_table[i].xtra_info, xtra, XTRA_INFO_LENGTH-1);
             fault_added = true;
             fault_index_table[code].location[loc] = i;
          } 
       }
-      if (!fault_added) LOG_ERROR("fault %s, location %d not added; fault table full!", fault_name[code], loc);
+      if (!fault_added) LOG_ERROR("fault %s, location %d not added; fault table full!", FAULT_STRING[code], loc);
    }
    return i;
 }
@@ -91,14 +91,14 @@ void delete_fault_entry(uint32_t code, uint8_t loc)
       {
          ts = *localtime(&fault_table[i].time);
          strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-         LOG_INFO("Removing fault: %s, location: %d, time: %s; fault table index: %d", fault_name[code], loc, buf, i);
+         LOG_INFO("Removing fault: %s, location: %d, time: %s; fault table index: %d", FAULT_STRING[code], loc, buf, i);
          fault_table[i].set = false;
          fault_table[i].code = 0;
          fault_index_table[code].location[loc] = 0;
          fault_deleted = true;
       }
    }
-   if (!fault_deleted) LOG_WARNING("Fault code: %d, location: %d not found on delete", code, loc);
+   if (!fault_deleted) LOG_WARNING("Fault code: %s, location: %d not found on delete", FAULT_STRING[code], loc);
 }
 
 void dump_fault_table()
@@ -113,7 +113,7 @@ void dump_fault_table()
    {
       sprintf(string, "  Fault Table:");
       LOG_DEBUG(string); printf("%s\n", string);
-      sprintf(string, "    Index, Code                            , Loc, Timestamp");
+      sprintf(string, "    Index, Code                            , Loc, Timestamp                , extra_info");
       LOG_DEBUG(string); printf("%s\n", string);
       for (i = 1; i < FAULT_TABLE_LENGTH; i++)
       {
@@ -121,7 +121,8 @@ void dump_fault_table()
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            sprintf(string, "        %d, %-32s,   %d, %s", i, fault_name[fault_table[i].code], fault_table[i].location, buf);
+            sprintf(string, "        %d, %-32s,   %d, %-25s, %s",
+               i, FAULT_STRING[fault_table[i].code], fault_table[i].location, buf, fault_table[i].xtra_info);
             LOG_DEBUG(string); printf("%s\n", string);
          }
       }
