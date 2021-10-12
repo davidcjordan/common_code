@@ -81,6 +81,14 @@ uint8_t add_fault_entry(uint32_t code, uint8_t loc, char * xtra)
 
 void delete_fault_entry(uint32_t code, uint8_t loc)
 {
+   if (code >= FAULT_END) {
+      LOG_ERROR("Out-of-range fault code: %d; highest code is: %d", code, FAULT_END);
+      return;
+   }
+   if (loc > FAULT_LOCATIONS) {
+      LOG_ERROR("Out-of-range fault location: %d; highest location is: %d", loc, FAULT_LOCATIONS);
+      return;
+   }
    struct tm ts = {0};
    char buf[32];
    bool fault_deleted = false;

@@ -21,7 +21,7 @@ typedef struct fault_index_entry {
    uint8_t location[FAULT_LOCATIONS];
 } fault_index_entry_t;
 
-fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE];
+extern fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE];
 
 uint8_t add_fault_entry(uint32_t code, uint8_t location, char * xtra);
 void delete_fault_entry(uint32_t code, uint8_t location);
