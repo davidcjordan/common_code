@@ -30,6 +30,10 @@ but there are at least 3 instances (2 cameras and a speaker)
 #include "string.h"
 #include "logging.h"
 
+static const char *FAULT_STRING[] = {
+    FOREACH_FAULT(GENERATE_STRING)
+};
+
 #define FAULT_TABLE_LENGTH 16
 fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
 fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE] = {0}; //used for fast lookup if fault is active

@@ -49,6 +49,7 @@ void dump_fault_table();
 	FAULT(NOT_RECEIVING_FROM_DEVICE) \
 	FAULT(UNRECOGNIZED_IP) \
 	FAULT(UNSUPPORTED_COMMAND) \
+	FAULT(PRIORITY_CAPABILITY_NOT_SET) \
 	FAULT(FAULT_END)
 
 #define GENERATE_ENUM(ENUM) ENUM,
@@ -58,9 +59,10 @@ enum FAULT_ENUM {
     FOREACH_FAULT(GENERATE_ENUM)
 };
 
-static const char *FAULT_STRING[] = {
-    FOREACH_FAULT(GENERATE_STRING)
-};
+// the following was moved to fault.c to prevent unused variable warning for each module that includes fault.g
+// static const char *FAULT_STRING[] = {
+//     FOREACH_FAULT(GENERATE_STRING)
+// };
 
 /*
 The following code be used to print a string for location, but locations are fault specific
