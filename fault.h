@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <assert.h>
 
 #define FAULT_INDEX_TABLE_SIZE 255
 #define XTRA_INFO_LENGTH 32
@@ -28,9 +29,21 @@ void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
 void dump_fault_table();
 
-#define set_fault(code, loc) if (fault_index_table[code].location[loc] == 0) add_fault_entry(code, loc, NULL);
-#define set_fault_w_xtra(code, loc, xtra) if (fault_index_table[code].location[loc] == 0) add_fault_entry(code, loc, xtra);
-#define clear_fault(code, loc) if (fault_index_table[code].location[loc] != 0) delete_fault_entry(code, loc);
+#define set_fault(code, loc) { \
+	assert(code < FAULT_END); \
+	assert(loc <= FAULT_LOCATIONS); \
+	if (fault_index_table[code].location[loc] == 0) add_fault_entry(code, loc, NULL); \
+}
+#define set_fault_w_xtra(code, loc, xtra) { \
+	assert(code < FAULT_END); \
+	assert(loc <= FAULT_LOCATIONS); \
+	if (fault_index_table[code].location[loc] == 0) add_fault_entry(code, loc, xtra); \
+}
+#define clear_fault(code, loc) { \
+	assert(code < FAULT_END); \
+	assert(loc <= FAULT_LOCATIONS); \
+	if (fault_index_table[code].location[loc] != 0) delete_fault_entry(code, loc); \
+}
 
 /* the following macros generate a string per fault code, where the fault code is an enum
 	refer to: https://stackoverflow.com/questions/9907160/how-to-convert-enum-names-to-string-in-c

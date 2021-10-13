@@ -5,22 +5,25 @@ The fault table is a list of active alarms and when they were set.  It is for us
 Adding and deleting faults requires iterating over the entries in the table to find a empty or
 or to find the right fault to clear.
 
-Setting/clearing a fault can occur many times a second, since the detector probably does not have the state
+Setting/clearing a fault can occur many times a second if the detector does not have the state
 of whether it is aleady set/cleared.
 
-Instead of the state of whether the fault is set/cleared implemented in every detector, it is implemented in
-the fault code using the fault_index_table.  The fault index table is referenced by the fault_code (an integer).
-This make it fast to detect whether an entry in the fault table has already been created.
+Instead of having the faulted state implemented in every detector, it is implemented in
+this fault code using the fault_index_table.
 
-The reason to have this fast is because the detectors may check for a condition multiple times a second.
+The fault index table is referenced by the fault_code (an integer) and fault location.
+This makes it fast to detect whether an entry in the fault table has already been created.
 
-The detcectors will use a macro, e.g. set/clear_fault which will add an entry to the fault_table 
+The detcectors use the macros, e.g. set/clear_fault which will add an entry to the fault_table 
 if it doesn't exist (set_fault) or delete if if it does exist (clear_fault)
 
 Because some of the components of the system have 2 instances (cameras, servo-wheels), then a location integer
 is included in order to not create a duplicate set of faults, For example, there is only one DEVICE_FAILURE_ON_INIT,
 but there are at least 3 instances (2 cameras and a speaker)
 
+Fault codes are specified in the fault.h file.  Macros generates a fault code enum, which should be used by the code.
+Another macro generates the string from the fault code enum, which is used by the dump_fault table to display the
+fault code instead of the integer.
 */
 
 #include <stdbool.h>
@@ -43,14 +46,15 @@ uint8_t add_fault_entry(uint32_t code, uint8_t loc, char * xtra)
 {
    bool fault_added = false;
    bool dup_fault = false;
-   if (code >= FAULT_END) {
-      LOG_ERROR("Out-of-range fault code: %d; highest code is: %d", code, FAULT_END);
-      return 0;
-   }
-   if (loc > FAULT_LOCATIONS) {
-      LOG_ERROR("Out-of-range fault location: %d; highest location is: %d", loc, FAULT_LOCATIONS);
-      return 0;
-   }
+   // the following should never happen; protected by assert in set/clear_fault macros
+   // if (code >= FAULT_END) {
+   //    LOG_ERROR("Out-of-range fault code: %d; highest code is: %d", code, FAULT_END);
+   //    return 0;
+   // }
+   // if (loc > FAULT_LOCATIONS) {
+   //    LOG_ERROR("Out-of-range fault location: %d; highest location is: %d", loc, FAULT_LOCATIONS);
+   //    return 0;
+   // }
    uint8_t i;
    // check if fault is already in the table
    for (i = 1; ((i < FAULT_TABLE_LENGTH) && !dup_fault); i++) 
@@ -85,14 +89,6 @@ uint8_t add_fault_entry(uint32_t code, uint8_t loc, char * xtra)
 
 void delete_fault_entry(uint32_t code, uint8_t loc)
 {
-   if (code >= FAULT_END) {
-      LOG_ERROR("Out-of-range fault code: %d; highest code is: %d", code, FAULT_END);
-      return;
-   }
-   if (loc > FAULT_LOCATIONS) {
-      LOG_ERROR("Out-of-range fault location: %d; highest location is: %d", loc, FAULT_LOCATIONS);
-      return;
-   }
    struct tm ts = {0};
    char buf[32];
    bool fault_deleted = false;
