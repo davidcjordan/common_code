@@ -106,12 +106,19 @@ void save_debug_log(char*path){
    fflush(pFile);
    uint32_t log_end_pos = ftell(pFile);
    uint32_t log_size = log_end_pos - log_start_pos;
+	if (log_size == 0) {
+		printf("log is empty\n");
+		return;
+	}
 	bool file_write = strcmp(path, "stdout");
 	#define MAX_STDOUT_CHARS 32*1024
 	//limit printf output
-	if (!file_write && log_size > MAX_STDOUT_CHARS) log_size = MAX_STDOUT_CHARS;
-
-   //printf("log_start: %d log_end: %d; size: %d\n", log_start_pos, log_end_pos, log_size);
+	if (!file_write && log_size > MAX_STDOUT_CHARS) {
+		log_size = MAX_STDOUT_CHARS;
+		// show the last MAX_STDOUT_CHARS instead of the beginning MAX_STDOUT_CHARS
+		log_start_pos = log_end_pos - MAX_STDOUT_CHARS;
+	}
+   // printf("log_start: %d log_end: %d; size: %d\n", log_start_pos, log_end_pos, log_size);
    char buffer[4096*1024];
    size_t rw_size;
    #define ELEMENTS_TO_READ 1
@@ -123,7 +130,6 @@ void save_debug_log(char*path){
          return;
       }
       rw_size = fread(buffer, log_size, ELEMENTS_TO_READ, pFile);
-		fflush(stdout);
       if (rw_size != ELEMENTS_TO_READ) {
          printf("%s read of %d bytes failed.", LOG_FILENAME, log_size);
 			fflush(stdout);
