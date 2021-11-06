@@ -26,8 +26,8 @@ const char LEVEL_WARN[] = "WARN";
 const char LEVEL_INFO[] = "INFO";
 const char LEVEL_DEBUG[] = "DBUG"; // level 5
 
-int log_to_file_level = 5;
-int log_to_stdout_level = 1;
+int log_to_file_level=5; //default to LEVEL_DEBUG;  TODO!! make a function of Cmake release/debug
+int log_to_stdout_level=5;
 
 void logging_init(void){
 //	debug_log_write_ptr = &debug_log[0];
@@ -79,7 +79,7 @@ void log_main(int level, const char * filename, int line_num, const char * forma
       info->tm_hour, info->tm_min, info->tm_sec, (int) (curTime.tv_nsec/1000000), 
 		level_ptr, basename((char * )filename), line_num); 
    
-   char log_string[128]; 
+   char log_string[192]; 
    va_list aptr; 
    va_start(aptr, format); 
    vsnprintf(log_string, sizeof(log_string), format, aptr); 
