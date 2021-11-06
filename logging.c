@@ -20,13 +20,14 @@ char VERSION_STRING[64] = {0};
 FILE *pFile;
 uint64_t previous_flush_timestamp;
 uint32_t log_start_pos;
-const char LEVEL_FATAL[] = "FATL";
+const char LEVEL_FATAL[] = "FATL"; // level 1
 const char LEVEL_ERROR[] = "ERRR";
 const char LEVEL_WARN[] = "WARN";
 const char LEVEL_INFO[] = "INFO";
-const char LEVEL_DEBUG[] = "DBUG";
+const char LEVEL_DEBUG[] = "DBUG"; // level 5
 
-int current_log_level = 5;
+int log_to_file_level = 5;
+int log_to_stdout_level = 1;
 
 void logging_init(void){
 //	debug_log_write_ptr = &debug_log[0];
@@ -62,7 +63,7 @@ void log_flush() {
 
 void log_main(int level, const char * filename, int line_num, const char * format, ...) 
 {
-	if (level > current_log_level) return;
+	if (level > log_to_file_level && level > log_to_stdout_level) return;
 
    const char * level_ptr = LEVEL_DEBUG;
    if (level == LLOG_FATAL) level_ptr = LEVEL_FATAL;
@@ -84,22 +85,26 @@ void log_main(int level, const char * filename, int line_num, const char * forma
    vsnprintf(log_string, sizeof(log_string), format, aptr); 
    va_end(aptr);
 
-   if (ftell(pFile) > LOG_FILE_MAX_BYTES){
-		fclose(pFile);
-		remove(PREVIOUS_LOG_FILENAME);
-		if (rename(LOG_FILENAME, PREVIOUS_LOG_FILENAME) != 0) printf("Error: boomer_log rename failed");
-		pFile=fopen(LOG_FILENAME, "w+");
-		if(pFile==NULL)
-		{
-			perror("Error opening /run/shm log file\n");
+	if (level <= log_to_file_level)
+	{
+		if (ftell(pFile) > LOG_FILE_MAX_BYTES){
+			fclose(pFile);
+			remove(PREVIOUS_LOG_FILENAME);
+			if (rename(LOG_FILENAME, PREVIOUS_LOG_FILENAME) != 0) printf("Error: boomer_log rename failed");
+			pFile=fopen(LOG_FILENAME, "w+");
+			if(pFile==NULL)
+			{
+				perror("Error opening /run/shm log file\n");
+			}
+			log_start_pos = ftell(pFile);
+			time_t t = time(NULL);
+			struct tm tm = *localtime(&t);
+			fprintf(pFile, "==== Log rolled at: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 		}
-      log_start_pos = ftell(pFile);
-		time_t t = time(NULL);
-		struct tm tm = *localtime(&t);
-		fprintf(pFile, "==== Log rolled at: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	}
-	fprintf(pFile, "%s>%s\n", info_string, log_string);
+	if (level <= log_to_file_level) fprintf(pFile, "%s>%s\n", info_string, log_string);
 	// fflush( pFile );
+	}
+	if (level <= log_to_stdout_level) printf("%s>%s\n", info_string, log_string);
 }
 
 void save_debug_log(char*path){

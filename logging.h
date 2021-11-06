@@ -4,6 +4,8 @@
 #define BOOMER_DIR "/home/pi/boomer"
 #define LOG_DIR "logs"
 extern char VERSION_STRING[64];
+extern int log_to_file_level;
+extern int log_to_stdout_level;
 
 void logging_init();
 void log_flush();
