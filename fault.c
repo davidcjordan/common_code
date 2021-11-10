@@ -113,30 +113,25 @@ void dump_fault_table()
 {
    struct tm ts = {0};
    char buf[32];
-   char string[96];
    uint32_t fault_count = 0;
    int i;
    for (i = 1; i < FAULT_TABLE_LENGTH; i++) if (fault_table[i].set) fault_count++;
    if (fault_count)
    {
-      sprintf(string, "  Fault Table:");
-      LOG_DEBUG(string); printf("%s\n", string);
-      sprintf(string, "    Index, Code                            , Loc, Timestamp                , extra_info");
-      LOG_DEBUG(string); printf("%s\n", string);
+      LOG_INFO("  Fault Table:");
+      LOG_INFO("    Index, Code                            , Loc, Timestamp                , extra_info");
       for (i = 1; i < FAULT_TABLE_LENGTH; i++)
       {
          if (fault_table[i].set)
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            sprintf(string, "        %d, %-32s,   %d, %-25s, %s",
+            LOG_INFO("        %d, %-32s,   %d, %-25s, %s",
                i, FAULT_STRING[fault_table[i].code], fault_table[i].location, buf, fault_table[i].xtra_info);
-            LOG_DEBUG(string); printf("%s\n", string);
          }
       }
    } else {
-      sprintf(string, "  Fault Table is empty");
-      LOG_DEBUG(string); printf("%s\n", string);
+      LOG_INFO("  Fault Table is empty");
    }
 }
 

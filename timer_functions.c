@@ -54,13 +54,13 @@ inline void sleepMillis(uint32_t millis) {
 }
 
 void dump_timing_profile(){
-	LOG_DEBUG("Timing Profile:");
+	LOG_INFO("Timing Profile:");
 	for(uint8_t i = 0; i<TIME_PROFILE_POINTS;i++){
 		if(i == 0) continue;
 		if(timing_profile[i] == 0)
 		{
-			LOG_DEBUG(" Total: %fms", (float)(timing_profile[i-1]-timing_profile[0])/1E6);
-			LOG_DEBUG(" w/o capture: %fms", (float)(timing_profile[i-1]-timing_profile[1])/1E6);
+			LOG_INFO(" Total: %fms", (float)(timing_profile[i-1]-timing_profile[0])/1E6);
+			LOG_INFO(" w/o capture: %fms", (float)(timing_profile[i-1]-timing_profile[1])/1E6);
 			break;
 		}
 		uint64_t dif = timing_profile[i] - timing_profile[i-1];
@@ -69,12 +69,12 @@ void dump_timing_profile(){
 			// this should never happen
 			// but it will happen if dump_timing_profile is called before all the entries are filled
 			uint64_t dif = timing_profile[i-1] - timing_profile[i];
-			LOG_DEBUG("  %u-%u: -%fms  > tp[%d]: %lld; tp[%d]: %lld; tp[%d]: %lld; tp[%d]: %lld",i-1,i,(float)dif/1E6, 
+			LOG_INFO("  %u-%u: -%fms  > tp[%d]: %lld; tp[%d]: %lld; tp[%d]: %lld; tp[%d]: %lld",i-1,i,(float)dif/1E6, 
 				i-2, (long long) timing_profile[i-2], 
 				i-1, (long long) timing_profile[i-1],
 				i, (long long) timing_profile[i],
 				i+1, (long long) timing_profile[i+1]);
 		}
-		else LOG_DEBUG("  %2u-%u: %8fms",i-1,i,(float)dif/1E6);
+		else LOG_INFO("  %2u-%u: %8fms",i-1,i,(float)dif/1E6);
 	}
 }
