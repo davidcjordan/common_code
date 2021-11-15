@@ -25,6 +25,7 @@
 #define CMD_INTERCEPTS 43 //indicates that this packet contains blob intercept data, cameras send data to boomer with this command
 
 #define CMD_LOG_INFO 50 // write statistics or other state info to the log
+#define CMD_SAVE_PIC 51 // take a pic and save it to /run/shm - probably in PNG format
 
 #define CMD_PLAY_SOUND 55 //sends a file name to the remote speaker, the speaker adds it to it's sound queue
 #define CMD_STOP_SOUND 56 //stops sound playback and also clears queue
