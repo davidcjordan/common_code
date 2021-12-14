@@ -33,6 +33,9 @@
 #define CMD_GET_IS_PLAYING 57 //returns 1 if sound is playing, 0 otherwise
 #define CMD_IS_PLAYING 58 //this packet is a response to GET_IS_PLAYING
 
+#define CMD_GET_TIME 60
+#define CMD_TIME_RESPONSE 61
+
 #define CMD_RESTART 86 // use exit(1) so that systemd will restart the process
 
 #define PORT 11000 //all boomer devices will receive on this port
