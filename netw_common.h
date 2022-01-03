@@ -17,16 +17,9 @@
 #define CMD_VERSION 36     //this packet is a response to a GET_VERSION command
 #define CMD_STATUS 37      //this packet is a response to GET_STATUS command
 #define CMD_ERROR 38       //this packet is a response to GET_ERROR command
-/*
-#define CMD_INTERCEPTS_MODE 40 //puts a camera into mode where it will transmit blob intercepts every frame
-#define CMD_IMAGE_MODE 41 //puts a camera into image mode, where it transmits frame images instead of blobs
-#define CMD_AUTO_EXP 42 //turns auto exposure on and off, off if first byte is 0, on if it's 1
-*/
 #define CMD_INTERCEPTS 43 //indicates that this packet contains blob intercept data, cameras send data to boomer with this command
 
 #define CMD_LOG_INFO 50 // write statistics or other state info to the log
-#define CMD_SAVE_PIC_MODE_ON 51 // periodically save a frame to /run/shm
-#define CMD_SAVE_PIC_MODE_OFF 52
 
 #define CMD_PLAY_SOUND 55 //sends a file name to the remote speaker, the speaker adds it to it's sound queue
 #define CMD_STOP_SOUND 56 //stops sound playback and also clears queue
@@ -35,6 +28,7 @@
 
 #define CMD_GET_TIME 60
 #define CMD_TIME_RESPONSE 61
+#define CMD_SET_CAM_EXPOS_GAIN 62
 
 #define CMD_RESTART 86 // use exit(1) so that systemd will restart the process
 
