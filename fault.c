@@ -37,7 +37,6 @@ static const char *FAULT_STRING[] = {
     FOREACH_FAULT(GENERATE_STRING)
 };
 
-#define FAULT_TABLE_LENGTH 16
 fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
 fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE] = {0}; //used for fast lookup if fault is active
 
@@ -135,16 +134,16 @@ void dump_fault_table()
    }
 }
 
-
 fault_table_entry_t * get_fault(uint32_t index)
 {
-   int i = index;
-   if (fault_table[i].set == false)
-   {
-      //look for a fault is that is set, since indexed fault was not set
-      for (i = 1; i < FAULT_TABLE_LENGTH; i++)
-         if (fault_table[i].set) break;
-   }
-   if (fault_table[i].set) return &fault_table[i];
+   if (fault_table[index].set) return &fault_table[index];
    else return NULL;
+}
+
+uint8_t get_fault_count()
+{
+   uint8_t fault_count=0;
+   for (int i = 1; i < FAULT_TABLE_LENGTH; i++)
+      if (fault_table[i].set) fault_count++;
+   return fault_count;
 }

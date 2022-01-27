@@ -5,6 +5,7 @@
 #include <time.h>
 #include <assert.h>
 
+#define FAULT_TABLE_LENGTH 16
 #define FAULT_INDEX_TABLE_SIZE 255
 #define XTRA_INFO_LENGTH 32
 
@@ -28,6 +29,7 @@ uint8_t add_fault_entry(uint32_t code, uint8_t location, char * xtra);
 void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
 void dump_fault_table();
+uint8_t get_fault_count();
 
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
