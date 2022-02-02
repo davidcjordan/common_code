@@ -14,7 +14,7 @@ this fault code using the fault_index_table.
 The fault index table is referenced by the fault_code (an integer) and fault location.
 This makes it fast to detect whether an entry in the fault table has already been created.
 
-The detcectors use the macros, e.g. set/clear_fault which will add an entry to the fault_table 
+The detectors use the macros, e.g. set/clear_fault which will add an entry to the fault_table 
 if it doesn't exist (set_fault) or delete if if it does exist (clear_fault)
 
 Because some of the components of the system have 2 instances (cameras, servo-wheels), then a location integer
@@ -35,6 +35,10 @@ fault code instead of the integer.
 
 static const char *FAULT_STRING[] = {
     FOREACH_FAULT(GENERATE_STRING)
+};
+
+static const char *NET_DEVICE_STRING[] = {
+    FOREACH_NET_DEVICE(GENERATE_STRING)
 };
 
 fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
@@ -118,15 +122,15 @@ void dump_fault_table()
    if (fault_count)
    {
       LOG_INFO("  Fault Table:");
-      LOG_INFO("    Index, Code                            , Loc, Timestamp                , extra_info");
+      LOG_INFO("    Index, Code                                , Location, Timestamp                , extra_info");
       for (i = 1; i < FAULT_TABLE_LENGTH; i++)
       {
          if (fault_table[i].set)
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            LOG_INFO("        %d, %-32s,   %d, %-25s, %s",
-               i, FAULT_STRING[fault_table[i].code], fault_table[i].location, buf, fault_table[i].xtra_info);
+            LOG_INFO("        %d, %-36s, %-8s, %-25s, %s",
+               i, FAULT_STRING[fault_table[i].code], NET_DEVICE_STRING[fault_table[i].location], buf, fault_table[i].xtra_info);
          }
       }
    } else {
