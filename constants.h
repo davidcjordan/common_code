@@ -3,7 +3,6 @@
 
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
-#define TOTAL_Y 79
 #define INCHES_TO_MM 25.4
 #define MPH_TO_MM_PER_TICK 7.4506
 #define MM_PER_TICK_TO_MPH .134217
@@ -29,3 +28,7 @@
 #define RIGHT_WIDE_X            6172.2        // 20.25*FEET_TO_MM, 1/2 way between center and sideline
 #define VERY_DEEP_Y				  9144.0         // 30*FEET_TO_MM
 
+// TOTAL_Y is the # of feet from where the ball leaves the wheels
+// to the far baseline. It assume the center of the wheel is one foot
+// behind the near baseline. total_y=1+39+39=79 feet
+#define TOTAL_Y 79
