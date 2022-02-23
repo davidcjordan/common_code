@@ -3,6 +3,7 @@
 
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
+#define TOTAL_Y 79
 #define INCHES_TO_MM 25.4
 #define MPH_TO_MM_PER_TICK 7.4506
 #define MM_PER_TICK_TO_MPH .134217
