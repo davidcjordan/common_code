@@ -1,6 +1,9 @@
 #ifndef logging_h
 #define logging_h
 
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
 #define BOOMER_DIR "/home/pi/boomer"
 #define LOG_DIR "logs"
 extern char VERSION_STRING[64];
