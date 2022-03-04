@@ -26,9 +26,6 @@ Another macro generates the string from the fault code enum, which is used by th
 fault code instead of the integer.
 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <time.h>
 #include "fault.h"
 #include "string.h"
 #include "logging.h"
@@ -112,7 +109,7 @@ void delete_fault_entry(uint32_t code, uint8_t loc)
    if (!fault_deleted) LOG_WARNING("Fault code: %s, location: %d not found on delete", FAULT_STRING[code], loc);
 }
 
-void dump_fault_table()
+void dump_fault_table(void)
 {
    struct tm ts = {0};
    char buf[32];
@@ -144,7 +141,7 @@ fault_table_entry_t * get_fault(uint32_t index)
    else return NULL;
 }
 
-uint8_t get_fault_count()
+uint8_t get_fault_count(void)
 {
    uint8_t fault_count=0;
    for (int i = 1; i < FAULT_TABLE_LENGTH; i++)

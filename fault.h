@@ -2,6 +2,7 @@
 #define fault_h
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <time.h>
 #include <assert.h>
 
@@ -28,8 +29,8 @@ extern fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE];
 uint8_t add_fault_entry(uint32_t code, uint8_t location, char * xtra);
 void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
-void dump_fault_table();
-uint8_t get_fault_count();
+void dump_fault_table(void);
+uint8_t get_fault_count(void);
 
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
@@ -101,20 +102,5 @@ enum FAULT_ENUM {
 enum NET_DEVICE_ENUM {
     FOREACH_NET_DEVICE(GENERATE_ENUM)
 };
-
-
-// the following was moved to fault.c to prevent unused variable warning for each module that includes fault.g
-// static const char *FAULT_STRING[] = {
-//     FOREACH_FAULT(GENERATE_STRING)
-// };
-
-/*
-The following code be used to print a string for location, but locations are fault specific
-
-static const char *DEVICE_STRING[] = {
-    FOREACH_DEVICE(GENERATE_STRING)
-};
-*/
-
 
 #endif //fault.h
