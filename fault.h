@@ -2,9 +2,11 @@
 #define fault_h
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <time.h>
 #include <assert.h>
 
+#define FAULT_TABLE_LENGTH 16
 #define FAULT_INDEX_TABLE_SIZE 255
 #define XTRA_INFO_LENGTH 32
 
@@ -27,7 +29,8 @@ extern fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE];
 uint8_t add_fault_entry(uint32_t code, uint8_t location, char * xtra);
 void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
-void dump_fault_table();
+void dump_fault_table(void);
+uint8_t get_fault_count(void);
 
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
@@ -51,6 +54,10 @@ void dump_fault_table();
 #define str(x) #x
 #define xstr(x) str(x)
 */
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
+//-=-=- start of exported defines
 
 #define FOREACH_FAULT(FAULT) \
 	FAULT(FAULT_BEGIN) \
@@ -59,7 +66,7 @@ void dump_fault_table();
 	FAULT(CAM_FAILURE_ON_SET_CONTROL) \
 	FAULT(CAM_FAILURE_TO_CAPTURE) \
 	FAULT(CAM_FAILED_PARAMETER_LOAD) \
-	FAULT(NOT_RECEIVING_FROM_DEVICE) \
+	FAULT(NOT_RECEIVING_FROM_NETWORK_DEVICE) \
 	FAULT(UNRECOGNIZED_IP) \
 	FAULT(UNSUPPORTED_COMMAND) \
 	FAULT(PRIORITY_CAPABILITY_NOT_SET) \
@@ -69,37 +76,31 @@ void dump_fault_table();
 	FAULT(CAM_SET_GAIN_FAILED) \
 	FAULT(CAM_SET_EXPOSURE_FAILED) \
 	FAULT(CAMERAS_NOT_SYNCHRONIZED) \
+	FAULT(I2C_ERROR_ON_INITIALIZATION) \
+	FAULT(GPIO_ERROR_ON_INITIALIZATION) \
+	FAULT(DAC_ERROR_ON_INITIALIZATION) \
+	FAULT(DAC_WRITE_ERROR) \
+	FAULT(ADC_ERROR_ON_INITIALIZATION) \
+	FAULT(ADC_EXCESSIVE_READ_ERRORS) \
+	FAULT(TACH_ERROR_ON_INITIALIZATION) \
+	FAULT(TACH_EXCESSIVE_READ_ERRORS) \
 	FAULT(FAULT_END)
 
-#define GENERATE_ENUM(ENUM) ENUM,
-#define GENERATE_STRING(STRING) #STRING,
+#define FOREACH_NET_DEVICE(NET_DEVICE) \
+	NET_DEVICE(LEFT) \
+	NET_DEVICE(RIGHT) \
+	NET_DEVICE(SPEAKER) \
+	NET_DEVICE(BASE) \
+	NET_DEVICE(UNRECOGNIZED_DEVICE)
+
+//-=-=- end of exported defines
 
 enum FAULT_ENUM {
     FOREACH_FAULT(GENERATE_ENUM)
 };
 
-// the following was moved to fault.c to prevent unused variable warning for each module that includes fault.g
-// static const char *FAULT_STRING[] = {
-//     FOREACH_FAULT(GENERATE_STRING)
-// };
-
-/*
-The following code be used to print a string for location, but locations are fault specific
-#define FOREACH_DEVICE(DEVICE) \
-	DEVICE(NA) \
-	DEVICE(BASE) \
-	DEVICE(LEFT_CAM) \
-	DEVICE(RIGHT_CAM) \
-	DEVICE(SPEAKER)
-
-enum DEVICE_ENUM {
-    FOREACH_DEVICE(GENERATE_ENUM)
+enum NET_DEVICE_ENUM {
+    FOREACH_NET_DEVICE(GENERATE_ENUM)
 };
-
-static const char *DEVICE_STRING[] = {
-    FOREACH_DEVICE(GENERATE_STRING)
-};
-*/
-
 
 #endif //fault.h

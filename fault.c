@@ -14,7 +14,7 @@ this fault code using the fault_index_table.
 The fault index table is referenced by the fault_code (an integer) and fault location.
 This makes it fast to detect whether an entry in the fault table has already been created.
 
-The detcectors use the macros, e.g. set/clear_fault which will add an entry to the fault_table 
+The detectors use the macros, e.g. set/clear_fault which will add an entry to the fault_table 
 if it doesn't exist (set_fault) or delete if if it does exist (clear_fault)
 
 Because some of the components of the system have 2 instances (cameras, servo-wheels), then a location integer
@@ -26,9 +26,6 @@ Another macro generates the string from the fault code enum, which is used by th
 fault code instead of the integer.
 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <time.h>
 #include "fault.h"
 #include "string.h"
 #include "logging.h"
@@ -37,7 +34,10 @@ static const char *FAULT_STRING[] = {
     FOREACH_FAULT(GENERATE_STRING)
 };
 
-#define FAULT_TABLE_LENGTH 16
+static const char *NET_DEVICE_STRING[] = {
+    FOREACH_NET_DEVICE(GENERATE_STRING)
+};
+
 fault_table_entry_t fault_table[FAULT_TABLE_LENGTH] = {0}; //table of active faults
 fault_index_entry_t fault_index_table[FAULT_INDEX_TABLE_SIZE] = {0}; //used for fast lookup if fault is active
 
@@ -109,7 +109,7 @@ void delete_fault_entry(uint32_t code, uint8_t loc)
    if (!fault_deleted) LOG_WARNING("Fault code: %s, location: %d not found on delete", FAULT_STRING[code], loc);
 }
 
-void dump_fault_table()
+void dump_fault_table(void)
 {
    struct tm ts = {0};
    char buf[32];
@@ -119,15 +119,15 @@ void dump_fault_table()
    if (fault_count)
    {
       LOG_INFO("  Fault Table:");
-      LOG_INFO("    Index, Code                            , Loc, Timestamp                , extra_info");
+      LOG_INFO("    Index, Code                                , Location, Timestamp                , extra_info");
       for (i = 1; i < FAULT_TABLE_LENGTH; i++)
       {
          if (fault_table[i].set)
          {
             ts = *localtime(&fault_table[i].time);
             strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", &ts);
-            LOG_INFO("        %d, %-32s,   %d, %-25s, %s",
-               i, FAULT_STRING[fault_table[i].code], fault_table[i].location, buf, fault_table[i].xtra_info);
+            LOG_INFO("        %d, %-36s, %-8s, %-25s, %s",
+               i, FAULT_STRING[fault_table[i].code], NET_DEVICE_STRING[fault_table[i].location], buf, fault_table[i].xtra_info);
          }
       }
    } else {
@@ -135,16 +135,16 @@ void dump_fault_table()
    }
 }
 
-
 fault_table_entry_t * get_fault(uint32_t index)
 {
-   int i = index;
-   if (fault_table[i].set == false)
-   {
-      //look for a fault is that is set, since indexed fault was not set
-      for (i = 1; i < FAULT_TABLE_LENGTH; i++)
-         if (fault_table[i].set) break;
-   }
-   if (fault_table[i].set) return &fault_table[i];
+   if (fault_table[index].set) return &fault_table[index];
    else return NULL;
+}
+
+uint8_t get_fault_count(void)
+{
+   uint8_t fault_count=0;
+   for (int i = 1; i < FAULT_TABLE_LENGTH; i++)
+      if (fault_table[i].set) fault_count++;
+   return fault_count;
 }
