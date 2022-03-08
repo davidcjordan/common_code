@@ -137,7 +137,8 @@ void dump_fault_table(void)
 
 fault_table_entry_t * get_fault(uint32_t index)
 {
-   if (fault_table[index].set) return &fault_table[index];
+   uint8_t idx= (index == 0) ? 1 : index;
+   if (fault_table[idx].set) return &fault_table[idx];
    else return NULL;
 }
 
