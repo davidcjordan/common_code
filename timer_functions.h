@@ -11,6 +11,8 @@ void dump_timing_profile(); //outputs the time differences between time points i
 
 void sleepMillis(uint32_t millis);
 
+void sleepMicros(uint32_t micros);
+
 void timer_init();
 
 void timer_update();
