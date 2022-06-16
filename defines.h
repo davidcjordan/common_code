@@ -62,7 +62,7 @@
 
 //-=-=- end of exported defines
 
-typedef struct point { double axis[2];} point_t;
+typedef struct point { float axis[2];} point_t;
 typedef struct line { point_t * end[2]; } line_t;
 
 #define GENERATE_ENUM(ENUM) ENUM,
