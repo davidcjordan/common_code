@@ -1,6 +1,8 @@
 //constants.h
 #pragma once
 
+//-=-=- start of exported defines
+
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
 #define INCHES_TO_MM 25.4
@@ -32,3 +34,59 @@
 // to the far baseline. It assume the center of the wheel is one foot
 // behind the near baseline. total_y=1+39+39=79 feet
 #define TOTAL_Y 79
+
+
+#define FOREACH_COURT_POINT(COURT_POINT) \
+	COURT_POINT(FBL) \
+	COURT_POINT(FBC) \
+	COURT_POINT(FBR) \
+	COURT_POINT(NBL) \
+	COURT_POINT(NBC) \
+	COURT_POINT(NBR) \
+	COURT_POINT(NSR) \
+	COURT_POINT(NSC) \
+	COURT_POINT(NSL)
+#define NUM_COURT_POINTS 9
+
+#define NUM_CAMS 2
+#define FRAME_WIDTH 1280
+#define FRAME_HEIGHT 800
+#define TOTPIX (FRAME_WIDTH * FRAME_HEIGHT)
+
+#define NUM_2D_AXIS 2
+#define FOREACH_AXIS_NAME(AXIS_NAME) \
+	AXIS_NAME(X) \
+	AXIS_NAME(Y) \
+	AXIS_NAME(Z)
+#define NUM_3D_AXIS 3
+
+//-=-=- end of exported defines
+
+typedef struct point { float axis[2];} point_t;
+typedef struct line { point_t * end[2]; } line_t;
+
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
+enum COURT_POINT_ENUM {
+    FOREACH_COURT_POINT(GENERATE_ENUM)
+};
+
+enum COURT_AXIS_NAME_ENUM {
+    FOREACH_AXIS_NAME(GENERATE_ENUM)
+};
+
+/*
+// The following is not necessary - defined by NET_DEVICE in faults.h
+#define FOREACH_CAMERA_NAME(CAMERA_NAME) \
+	CAMERA_NAME(LEFT) \
+	CAMERA_NAME(RIGHT)
+*/
+
+#ifndef MIN
+#  define MIN(a,b)  ((a) > (b) ? (b) : (a))
+#endif
+
+#ifndef MAX
+#  define MAX(a,b)  ((a) < (b) ? (b) : (a))
+#endif
