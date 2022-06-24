@@ -23,45 +23,7 @@ void vector_add(double ax, double ay, double az, double bx, double by, double bz
 	*cz = az + bz;
 } // end of sub
 
-/*
-double vector_angle_from_tracking_c(double ax, double ay, double az, double bx, double by, double bz)
-{ // start of sub
-	// angle between 2 vectors: cos(angle) = (dot product of a and b) / ((length of a) x (length of b))
-	// So angle = arccos( (dot product of a and b) / ((length of a) * (length of b)))
-	double dot_a_b;							 // dot product of a and b
-	double length_a, length_b;				 // length of vectors a and b
-	double temp;								 // before arccosin(temp)
-	double rad_deg = 57.29577951;			 // used to convert from radians to degrees
-	double diff_x, diff_y, diff_z;		 // difference between unit vectors A and B, only used when close to zero angle
-	double uax, uay, uaz, ubx, uby, ubz; // unit vectors A and B, only used when close to zero angle
-	double length_diff;						 // length of difference between tips of unit vectors A and B
-	double angle;								 // angle between vectors
 
-	dot_a_b = dot_product(ax, ay, az, bx, by, bz);
-	length_a = vector_length(ax, ay, az);
-	length_b = vector_length(bx, by, bz);
-	if (length_a == 0)
-		return (0);
-	if (length_b == 0)
-		return (0);
-	temp = dot_a_b / (length_a * length_b);
-	// if (temp > .9999999) return(0); // old code that fell apart at very small angles
-	if (temp < .9999)
-	{															 // too close to discontinuity so use atan() function instead
-		unit_vector(ax, ay, az, &uax, &uay, &uaz); // turn vector A into a unit vector
-		unit_vector(bx, by, bz, &ubx, &uby, &ubz); // turn vector B into a unit vector
-		diff_x = uax - ubx;
-		diff_y = uay - uby;
-		diff_z = uaz - ubz; // get difference between tips of vectors
-		length_diff = vector_length(diff_x, diff_y, diff_z);
-		angle = atan(length_diff); // tan(angle) = length_diff / 1.0
-	}
-	else
-		angle = acos(temp);
-	angle = angle * rad_deg;
-	return (angle);
-} // end of sub
-*/
 double vector_angle(double ax, double ay, double az, double bx, double by, double bz)
 {
 	// angle between 2 vectors: cos(angle) = (dot product of a and b) / ((length of a) x (length of b))
