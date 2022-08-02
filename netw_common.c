@@ -34,7 +34,7 @@ extern int errno;
 int sockfd; //used to refer to socket once it's opened
 struct sockaddr_in si_me, si_rcv_from, si_send_to; //address descriptors
 const int addrlen = sizeof(struct sockaddr_in);
-char packet[255];    //buffer used by get_packet; empty string if no packet
+char packet[PACKET_MAX];    //buffer used by get_packet; empty string if no packet
 char source_ip[IP_ADDR_STRING_LENGTH];  //set by get_packet, human readable string format
 uint8_t buffer[PACKET_MAX]; //buffer used to receive packets
 

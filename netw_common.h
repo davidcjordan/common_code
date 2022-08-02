@@ -32,8 +32,10 @@
 
 #define CMD_RESTART 86 // use exit(1) so that systemd will restart the process
 
+#define FRAME_CHUNK_SIZE_FOR_WIFI 2048 //used to send video frames in chunks
+
 #define PORT 11000 //all boomer devices will receive on this port
-#define PACKET_MAX 1300 //max length of packet data including null terminator
+#define PACKET_MAX 2304 //max for WiFi
 #define IP_ADDR_STRING_LENGTH 16
 
 extern const char ADDR_BOOMER[];
@@ -41,7 +43,11 @@ extern const char ADDR_LEFT_CAM[];
 extern const char ADDR_RIGHT_CAM[];
 extern const char ADDR_SPEAKER[];
 
+//extern for the cam/speaker/boomer network.c modules
+extern char packet[]; 
+extern char source_ip[16];
 extern uint16_t packet_len;
+
 
 bool network_init(); //call once at program start, opens receive port
 void network_close(); //cleans up before exit, closes port
@@ -61,10 +67,6 @@ typedef struct net_error_stats {
    uint32_t unrecognized_source_count;
    char last_unrecognized_source[IP_ADDR_STRING_LENGTH];
 } net_error_stats_t;
-
-//extern for the cam/speaker/boomer network.c modules
-extern char source_ip[16];
-extern char packet[255]; 
 extern net_error_stats_t net_error_stats;
 
 #endif
