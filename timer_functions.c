@@ -55,11 +55,9 @@ inline void sleepMillis(uint32_t millis) {
 
 inline void sleepMicros(uint32_t micros) {
 	struct timespec sleep;
-	sleep.tv_sec = micros / 1000000000; //1E9
-	sleep.tv_nsec = (micros % 1000000000) * 1000L;
+	sleep.tv_sec = micros / 1000000; //1E9
+	sleep.tv_nsec = (micros % 1000000) * 1000L;
 	while(nanosleep(&sleep, &sleep) && errno == EINTR);
-	// while(clock_nanosleep(CLOCK_MONOTONIC, 0, &sleep, &sleep) && errno == EINTR);
-	// clock_nanosleep is recommended per: https://linux.die.net/man/2/nanosleep
 }
 
 void dump_timing_profile(){
