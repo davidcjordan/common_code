@@ -102,6 +102,7 @@ uint8_t get_fault_count(void);
 	NET_DEVICE(RIGHT) \
 	NET_DEVICE(SPEAKER) \
 	NET_DEVICE(BASE) \
+	NET_DEVICE(TRACKING) \
 	NET_DEVICE(UNRECOGNIZED_DEVICE)
 
 //-=-=- end of exported defines
