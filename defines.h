@@ -60,6 +60,10 @@
 	AXIS_NAME(Z)
 #define NUM_3D_AXIS 3
 
+#define FOREACH_FRAME_TYPE(FRAME_TYPE_NAME) \
+	FRAME_TYPE_NAME(EVEN) \
+	FRAME_TYPE_NAME(ODD)
+
 //-=-=- end of exported defines
 
 typedef struct point { float axis[2];} point_t;
@@ -67,6 +71,10 @@ typedef struct line { point_t * end[2]; } line_t;
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
+
+enum FRAME_TYPE_ENUM {
+    FOREACH_FRAME_TYPE(GENERATE_ENUM)
+};
 
 enum COURT_POINT_ENUM {
     FOREACH_COURT_POINT(GENERATE_ENUM)
