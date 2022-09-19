@@ -2,6 +2,7 @@
 #define netw_common_h
 
 #include <stdint.h>
+#include <stdbool.h>
 
 //the first byte of every packet is the "command"
 // CMD_START is no longer used; recording starts on CMD_GET_SYNC
