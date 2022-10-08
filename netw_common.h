@@ -30,6 +30,7 @@
 #define CMD_GET_TIME 60
 #define CMD_TIME_RESPONSE 61
 #define CMD_SET_CAM_EXPOS_GAIN 62
+#define CMD_SET_COURT_POINTS 63
 
 #define CMD_RESTART 86 // use exit(1) so that systemd will restart the process
 
