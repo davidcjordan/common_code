@@ -64,6 +64,7 @@ void log_flush() {
 void log_main(int level, const char * filename, int line_num, const char * format, ...) 
 {
 	if (level > log_to_file_level && level > log_to_stdout_level) return;
+	if (pFile == NULL) return; //prevent a segmentation fault if logging_init is not called
 
    const char * level_ptr = LEVEL_DEBUG;
    if (level == LLOG_FATAL) level_ptr = LEVEL_FATAL;
