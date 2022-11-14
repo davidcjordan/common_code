@@ -3,6 +3,8 @@
 
 //-=-=- start of exported defines
 
+#define BOOMER_SSID "BOOM_NET"
+
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
 #define INCHES_TO_MM 25.4

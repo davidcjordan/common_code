@@ -13,6 +13,8 @@
 
 #include "netw_common.h"
 #include "logging.h"
+#include "timer_functions.h" //for millis
+#include "defines.h" //for BOOMER_SSID
 
 //#define USE_ENET 1
 #ifdef USE_ENET
@@ -130,20 +132,89 @@ void get_packet(){
 
 void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[])
 {
-   si_send_to.sin_addr.s_addr = inet_addr(address);
+	enum State {CURRENT, PREVIOUS};
+	static bool connected_state[2]= {true, true};
+	static uint64_t disconnected_at_millis= UINT64_MAX;
+	#define SENDTO_NETUNREACH_THRESHOLD 7
+	static uint8_t sendto_unreachable_count= 0;
+	#define UNREACHABLE_LOG_STATUS_INTERVAL_MILLIS (30*60*1000)   //log wifi status every N minutes
+	static uint64_t previous_unreachable_log_status_millis= 0;
+    
+	// the following check could be used to detect sending to base, vs sending from base
+	// if (strcmp(ADDR_BOOMER, address) == 0)
+
+	si_send_to.sin_addr.s_addr = inet_addr(address);
 	int n = sendto(sockfd, data, length, 0, (struct sockaddr*) &si_send_to, addrlen);
+	//NOTE: sendto errors happen on the cams & speaker; they don't seem to happen on the base
 	if (n < 0)
 	{
-		net_error_stats.sendto_failed_count++;
-		if ((net_error_stats.sendto_failed_count % 128) == 0) {
-			LOG_WARNING("sendto() failed with return code: %d\n", n);
+		if (errno == ENETUNREACH)
+		{
+			// LOG_WARNING("sendto() failed with network unreachable");
+			if (++sendto_unreachable_count > SENDTO_NETUNREACH_THRESHOLD)
+				connected_state[CURRENT]= false;
+		} else {
+			/*
+				There are other possible errno, like ENETDOWN, ECOMM, EHOSTUNREACH, EHOSTDOWN.
+				Only got ENETUNREACH when testing using 'sudo ip link set wlan0 down'
+			*/
+			if ((++net_error_stats.sendto_failed_count % 300) == 0)
+				LOG_WARNING("sendto() failed with return code: errno=%d %s", errno, strerror(errno));
 		}
-      /* TODO: add error count thresholding
-		if (net_error_stats.sendto_failed_count > SENDTO_EXCESSIVE_ERROR_THRESHOLD) {
-			LOG_ERROR("Exiting due to > %d sendto() failures.\n", SENDTO_EXCESSIVE_ERROR_THRESHOLD);
-		}
-      */
+	} else
+	{
+		connected_state[CURRENT]= true;
+		sendto_unreachable_count= 0;
 	}
+
+	if (!connected_state[PREVIOUS] && connected_state[CURRENT])
+	{
+		enum Interval {HOURS, MINUTES, SECONDS};
+		uint32_t disconnected[3];
+		disconnected[SECONDS]= (millis-disconnected_at_millis)/1000;
+		disconnected[MINUTES]= disconnected[SECONDS]/60;
+		disconnected[HOURS]= disconnected[MINUTES]/60;
+
+		disconnected[MINUTES]= disconnected[MINUTES]-(disconnected[HOURS]*60);
+		disconnected[SECONDS]= disconnected[SECONDS]-(disconnected[MINUTES]*60);
+		
+		//NOTE: timer_update must be called to have millis updated for the time-based conditionals to work
+		LOG_INFO("Network reconnected after %02d:%02d:%02d (HH:MM:SS)",
+			disconnected[HOURS], disconnected[MINUTES], disconnected[SECONDS]);
+		// LOG_INFO("Re-connected: millis=%llu disconnected_millis=%llu previous_unreachable_log_status_millis=%llu",
+		// 	millis, disconnected_at_millis, previous_unreachable_log_status_millis);
+	}
+	if (connected_state[PREVIOUS] && !connected_state[CURRENT])
+	{
+		LOG_WARNING("Network disconnected after %d ENETUNREACH errors.", SENDTO_NETUNREACH_THRESHOLD);
+		disconnected_at_millis= millis;
+		previous_unreachable_log_status_millis= 0; //force log of wifi scan
+	}
+
+	if (!connected_state[CURRENT] && (millis > (previous_unreachable_log_status_millis+UNREACHABLE_LOG_STATUS_INTERVAL_MILLIS)))
+	{
+		//if not connected, then look for problems: is BOOM_NET available?
+		previous_unreachable_log_status_millis= millis;
+		FILE *fp= popen("iwgetid -s wlan0","r"); 
+		#define MAX_RESPONSE_CHARS 192
+		char response[MAX_RESPONSE_CHARS]= {0};
+		fscanf(fp,"%s",response);
+     	fclose(fp);
+		// iwgetid returns BOOMNET instead of BOOM_NET, so only compare first 4 chars
+		if (strncmp(response, BOOMER_SSID, 4) == 0)
+			LOG_INFO("Network unreachable, but connected to network=%s", response);
+		else 
+		{
+			// show available networks.  cams/speaker use wlan0, so this is NOT very useful for the base
+			LOG_INFO("Network unreachable, iwgetid=%s", response);
+			fp= popen("iwlist wlan0 scanning | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3\" \"}'","r"); 
+			memset(response, 0, MAX_RESPONSE_CHARS);
+			fgets(&response[0], MAX_RESPONSE_CHARS-1, fp);
+	     	fclose(fp);
+			LOG_INFO("Network_scan=%s", response);
+		}
+	}
+	connected_state[PREVIOUS]= connected_state[CURRENT];
 }
 
 void send_packet(uint8_t command_type, uint8_t* data, uint16_t length, const char address[]){
@@ -164,6 +235,6 @@ void dump_net_error_stats()
 	LOG_INFO("  rcvfrom_failed_count:      %d", net_error_stats.rcvfrom_failed_count);
 	LOG_INFO("  unrecognized_cmd_count:    %d", net_error_stats.unrecognized_cmd_count);
 	LOG_INFO("  last_unrecognized_cmd:     %d", net_error_stats.last_unrecognized_cmd);
-	LOG_INFO("  nrecognized_source_count:  %d", net_error_stats.unrecognized_source_count);
+	LOG_INFO("  unrecognized_source_count:  %d", net_error_stats.unrecognized_source_count);
 	LOG_INFO("  last_unrecognized_source:  %s", net_error_stats.last_unrecognized_source);
 }
