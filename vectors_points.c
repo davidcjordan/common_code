@@ -1,6 +1,7 @@
 // vector_points.c: vector_add, rotate, mult, etc
 #include <math.h>
 #include "vectors_points.h"
+#include <logging.h>
 
 double vector_length(double ax, double ay, double az)
 { // start of sub
@@ -168,3 +169,39 @@ void unit_vector_float(float ax, float ay, float az, float *bx, float *by, float
   *by = ay / length;
   *bz = az / length;
 }
+
+float best_fit_sum_of_squares(float x[],float y[], int elements,float y_goal)
+{
+int i;
+float sum_x,sum_y,sum_xx,sum_xy;
+float ave_x,ave_y,SS_xx,SS_xy;
+float slope,y_intercept,x_best;
+
+	LOG_DEBUG("elements=%d y_goal=%.1f",elements,y_goal);
+	if(elements<=0){
+		LOG_ERROR("No elements in best_fit_sum_of_squares sub");
+		return(0.0);
+	}
+	sum_x=sum_y=sum_xx=sum_xy=0;
+	for(i=0;i<elements;i++) {
+		sum_x += x[i];	// get average of X array
+		sum_y += y[i];	// get average of Y array
+		LOG_DEBUG("i=%d x=%f y=%f", i, x[i], y[i]);
+		sum_xx += x[i]*x[i];	// get average of XxX
+		sum_xy += x[i]*y[i];	// get average of XxY
+	}
+	ave_x=sum_x/elements;
+	ave_y=sum_y/elements;
+	SS_xx=sum_xx - sum_x*sum_x/elements;
+	SS_xy=sum_xy - sum_x*sum_y/elements;
+	slope=SS_xy/SS_xx;
+	y_intercept=ave_y - slope*ave_x;
+	LOG_DEBUG("sum_x=%.1f sum_y=%.1f sum_xx=%.1f sum_xy=%.1f",
+		sum_x,sum_y,sum_xx,sum_xy);
+	LOG_DEBUG("ave_x=%.1f ave_y=%.1f SS_xx=%.1f SS_xy=%.1f",
+		ave_x,ave_y,SS_xx,SS_xy);
+	x_best=(y_goal - y_intercept)/slope;
+	LOG_DEBUG("slope=%.3f y_intercept=%.3f x_best=%.1f y_goal=%.1f",
+		slope,y_intercept,x_best,y_goal);
+	return(x_best);
+}	// end of best_fit_sum_of_squares() sub

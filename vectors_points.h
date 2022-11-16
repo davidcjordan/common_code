@@ -22,5 +22,6 @@ void get_intersection(double ax, double ay, double bx, double by, double cx, dou
 void get_intersection_line(line_t a, line_t b, point_t *intersection);
 void interp_float(float x1, float x2, float x3, float y1, float y2, float *y3);
 void unit_vector_float(float ax, float ay, float az, float *bx, float *by, float *bz);
+float best_fit_sum_of_squares(float x[],float y[],int elements,float y_goal);
 
 #endif
