@@ -196,12 +196,12 @@ float slope,y_intercept,x_best;
 	SS_xy=sum_xy - sum_x*sum_y/elements;
 	slope=SS_xy/SS_xx;
 	y_intercept=ave_y - slope*ave_x;
-	LOG_DEBUG("sum_x=%.1f sum_y=%.1f sum_xx=%.1f sum_xy=%.1f",
+	LOG_DEBUG("sum_x=%.3f sum_y=%.3f sum_xx=%.3f sum_xy=%.3f",
 		sum_x,sum_y,sum_xx,sum_xy);
-	LOG_DEBUG("ave_x=%.1f ave_y=%.1f SS_xx=%.1f SS_xy=%.1f",
+	LOG_DEBUG("ave_x=%.3f ave_y=%.3f SS_xx=%.3f SS_xy=%.3f",
 		ave_x,ave_y,SS_xx,SS_xy);
 	x_best=(y_goal - y_intercept)/slope;
-	LOG_DEBUG("slope=%.3f y_intercept=%.3f x_best=%.1f y_goal=%.1f",
+	LOG_DEBUG("slope=%.3f y_intercept=%.3f x_best=%.3f y_goal=%.3f",
 		slope,y_intercept,x_best,y_goal);
 	return(x_best);
 }	// end of best_fit_sum_of_squares() sub
