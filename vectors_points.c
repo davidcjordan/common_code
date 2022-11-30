@@ -1,7 +1,7 @@
 // vector_points.c: vector_add, rotate, mult, etc
 #include <math.h>
 #include "vectors_points.h"
-#include <logging.h>
+#include "logging.h"
 
 double vector_length(double ax, double ay, double az)
 { // start of sub
