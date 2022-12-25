@@ -159,8 +159,25 @@ void get_intersection_line(line_t a, line_t b, point_t *intersection)
   intersection->axis[Y]= intersection->axis[X] * line_a_slope + line_a_constant;
 }
 
-void interp_float(float x1, float x2, float x3, float y1, float y2, float *y3){
-  *y3 = y1 + (x3 - x1)*(y2 - y1) / (x2 - x1);
+float interpolate_y_from_x(float x1, float x2, float x3, float y1, float y2){
+  return (y1 + (x3 - x1)*(y2 - y1) / (x2 - x1));
+}
+
+// float interpolate_x_from_y(float y1, float y2, float y3, float x1, float x2){
+//   return (x1 + (y3 - y1)*(x2 - x1) / (y2 - y1));
+// }
+
+// float interp(m1,a1,m2,a2,a3) sub: This subroutines interpolates between motor commands m1-m2 using a3-a1/a2-a1
+//  and the m2-m1: returns float value. Think of this function as line defined by 2 points (m1,a1) and (m2,a2).
+// This function returns the value of m3 corresponding to a point on the line with the "a" component of a3.
+// Or it returns xmid, given xlo,ylo ,xhi,yhi ,ymid.
+//NOTE: the order of parameters is different than from interpolate_y_from_x
+float interpolate_x_from_y(float m1, float a1, float m2, float a2, float a3)
+{
+	float mtot = m2 - m1;  // tot diff in motor commands 1 and 2
+	float atot = a2 - a1;  // tot diff in acceleration at m1 and m2
+	float adiff = a3 - a1; // diff from acceleration 1
+	return (m1 + adiff * mtot / atot);
 }
 
 void unit_vector_float(float ax, float ay, float az, float *bx, float *by, float *bz){
@@ -172,10 +189,10 @@ void unit_vector_float(float ax, float ay, float az, float *bx, float *by, float
 
 float best_fit_sum_of_squares(float x[],float y[], int elements,float y_goal)
 {
-int i;
-float sum_x,sum_y,sum_xx,sum_xy;
-float ave_x,ave_y,SS_xx,SS_xy;
-float slope,y_intercept,x_best;
+	int i;
+	float sum_x,sum_y,sum_xx,sum_xy;
+	float ave_x,ave_y,SS_xx,SS_xy;
+	float slope,y_intercept,x_best;
 
 	LOG_DEBUG("elements=%d y_goal=%.1f",elements,y_goal);
 	if(elements<=0){
@@ -204,4 +221,13 @@ float slope,y_intercept,x_best;
 	LOG_DEBUG("slope=%.3f y_intercept=%.3f x_best=%.3f y_goal=%.3f",
 		slope,y_intercept,x_best,y_goal);
 	return(x_best);
-}	// end of best_fit_sum_of_squares() sub
+}
+
+float map(float input,float in_low, float in_high, float out_low, float out_high)
+{
+	float input_range = in_high - in_low;
+	float magnitude = input - in_low;
+	float proportion = magnitude/input_range;
+	float output_range = out_high - out_low;
+	return (output_range*proportion)+out_low;
+}

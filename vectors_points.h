@@ -20,8 +20,16 @@ void get_intersection(double ax, double ay, double bx, double by, double cx, dou
 
 // This subroutine doesn't work if the lines are vertical (slope = infinity)
 void get_intersection_line(line_t a, line_t b, point_t *intersection);
-void interp_float(float x1, float x2, float x3, float y1, float y2, float *y3);
+
+float interpolate_y_from_x(float x1, float x2, float x3, float y1, float y2);
+//NOTE: the order of parameters is different than from interpolate_y_from_x
+float interpolate_x_from_y(float m1, float a1, float m2, float a2, float a3);
+
 void unit_vector_float(float ax, float ay, float az, float *bx, float *by, float *bz);
+
 float best_fit_sum_of_squares(float x[],float y[],int elements,float y_goal);
+//maps the input range proportionally onto the output range
+float map(float input,float in_low, float in_high, float out_low, float out_high);
+
 
 #endif
