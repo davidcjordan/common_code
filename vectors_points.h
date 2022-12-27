@@ -31,5 +31,8 @@ float best_fit_sum_of_squares(float x[],float y[],int elements,float y_goal);
 //maps the input range proportionally onto the output range
 float map(float input,float in_low, float in_high, float out_low, float out_high);
 
+#ifndef fequal
+#  define fequal(f1,f2)  ((fabs(f1-f2)) < (.0001) ? 1 : 0)
+#endif
 
 #endif
