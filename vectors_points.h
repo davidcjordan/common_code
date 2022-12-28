@@ -1,6 +1,8 @@
 #ifndef vectors_points_h
 #define vectors_points_h
 // #include <stdbool.h>
+#include <math.h>
+
 #include "defines.h" //point and line structs
 
 void cross_product(double ax, double ay, double az, double bx, double by, double bz, double *cx, double *cy, double *cz);
