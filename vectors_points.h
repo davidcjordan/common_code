@@ -2,7 +2,7 @@
 #define vectors_points_h
 // #include <stdbool.h>
 #include <math.h>
-
+#include <stdint.h>
 #include "defines.h" //point and line structs
 
 void cross_product(double ax, double ay, double az, double bx, double by, double bz, double *cx, double *cy, double *cz);
@@ -36,5 +36,7 @@ float map(float input,float in_low, float in_high, float out_low, float out_high
 #ifndef fequal
 #  define fequal(f1,f2)  ((fabs(f1-f2)) < (.0001) ? 1 : 0)
 #endif
+
+int16_t range_rand(int16_t low, int16_t hi);
 
 #endif

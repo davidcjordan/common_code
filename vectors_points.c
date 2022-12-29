@@ -1,5 +1,6 @@
 // vector_points.c: vector_add, rotate, mult, etc
 #include <math.h>
+#include <stdlib.h> //used for rand() function
 #include "vectors_points.h"
 #include "logging.h"
 
@@ -230,4 +231,15 @@ float map(float input,float in_low, float in_high, float out_low, float out_high
 	float proportion = magnitude/input_range;
 	float output_range = out_high - out_low;
 	return (output_range*proportion)+out_low;
+}
+
+//random function that returns a value beteen hi and low (inclusive), hi must be lower than low
+int16_t range_rand(int16_t low, int16_t hi)
+{
+	// uint16_t range = (hi - low) + 1;
+	// uint16_t new_max = RAND_MAX - (RAND_MAX%range); //reduce RAND_MAX until it is divisble by range
+	// uint16_t r = rand();
+	// while(r>new_max) r = rand(); //may have to get a new value occasionally
+	// return r%range + low;
+	return ((rand() % (hi - low + 1)) + low);
 }
