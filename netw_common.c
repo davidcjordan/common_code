@@ -79,7 +79,7 @@ bool network_init(){
 		LOG_ERROR("socket bind to port %d failed - in use by another program.", PORT);
 		return true;
 	} 
-	LOG_INFO("OK: Using address: %s, port: %d", ADDR_BOOMER, PORT);
+	// LOG_INFO("OK: Using address: %s, port: %d", ADDR_BOOMER, PORT);
 
 	// set address for future send_packets to send to boomer
 	memset((char *) &si_send_to, 0, sizeof(si_send_to));
@@ -88,7 +88,6 @@ bool network_init(){
 	si_send_to.sin_addr.s_addr = inet_addr(ADDR_BOOMER);
 
 	memset((char *) &si_rcv_from, 0, sizeof(si_rcv_from));
-	LOG_DEBUG("Socket setup with no errors.");
 	return false;
 }
 
