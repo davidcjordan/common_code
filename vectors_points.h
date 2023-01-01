@@ -34,7 +34,7 @@ float best_fit_sum_of_squares(float x[],float y[],int elements,float y_goal);
 float map(float input,float in_low, float in_high, float out_low, float out_high);
 
 #ifndef fequal
-#  define fequal(f1,f2)  ((fabs(f1-f2)) < (.0001) ? 1 : 0)
+#  define fequal(f1,f2)  ((fabs(f1-f2)) < (.005) ? 1 : 0)
 #endif
 
 int16_t range_rand(int16_t low, int16_t hi);
