@@ -67,6 +67,12 @@
 	FRAME_TYPE_NAME(EVEN) \
 	FRAME_TYPE_NAME(ODD)
 
+#define FOREACH_BLOB_TYPE(BLOB_TYPE_NAME) \
+	BLOB_TYPE_NAME(BALL_BLOB) \
+	BLOB_TYPE_NAME(PLAYER_BLOB) \
+	BLOB_TYPE_NAME(SPECTATOR_BLOB) \
+	BLOB_TYPE_NAME(TEST_BLOB)
+
 //-=-=- end of exported defines
 
 typedef struct point { float axis[2];} point_t;
@@ -87,6 +93,11 @@ enum COURT_AXIS_NAME_ENUM {
     FOREACH_AXIS_NAME(GENERATE_ENUM)
 };
 
+enum BLOB_TYPE_ENUM {
+    FOREACH_BLOB_TYPE(GENERATE_ENUM)
+};
+
+
 /*
 // The following is not necessary - defined by NET_DEVICE in faults.h
 #define FOREACH_CAMERA_NAME(CAMERA_NAME) \
@@ -101,3 +112,4 @@ enum COURT_AXIS_NAME_ENUM {
 #ifndef MAX
 #  define MAX(a,b)  ((a) < (b) ? (b) : (a))
 #endif
+
