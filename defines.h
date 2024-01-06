@@ -13,14 +13,16 @@
 #define MM_PER_TICK_TO_MPH .134217
 #define MPH_TO_FEET_PER_SECOND (88.0 / 60.0)
 #define MM_PER_TICK_TO_FEET_PER_SECOND (MM_PER_TICK_TO_MPH * MPH_TO_FEET_PER_SECOND)
-#define HALFBALLSIZE 34.29 /*  radius of tennis ball in mm. */
-
+#define HALF_BALL_SIZE_MM 33.5 /*  radius of tennis ball in millimeters. */
+#define HALF_BALL_SIZE_FT .1099 // radius of tennis ball in feet.
 #define RADIANS_TO_DEGREES 57.29577951
 #define DEGREES_TO_RADIANS 0.017453293
+// Camera stuff
 #define FRAME_TIME .016666667
 #define GRAVITY_IN_FEET_PER_SECOND_SQUARED 32.174
 #define CX_MID (FRAME_WIDTH / 2 - 0.5)
 #define CY_MID (FRAME_HEIGHT / 2 - 0.5)
+#define PIXEL_SIZE_MM 0.003 /* pixel size is .003 mm. */
 
 #define LEFT_DOUBLE_SIDELINE_X  -1371.6       // doubles sideline
 #define LEFT_SINGLE_SIDELINE_X  0.0           // origin of X
