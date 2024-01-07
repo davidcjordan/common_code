@@ -9,10 +9,17 @@
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
 #define INCHES_TO_MM 25.4
-#define MPH_TO_MM_PER_TICK 7.4506
-#define MM_PER_TICK_TO_MPH .134217
+#define FEET_PER_SEC_TO_MPH (60/88.0)
+#define FEET_PER_FRAME_TO_MPH (60*60/88.0)
+// A tennis ball hit at 100 mph will be going roughly 73 mph 60 feet later
+// This next value guesses the initial hit velocity based on 70 Feet between hit and bounce
+// So if the bounce velocity is 50 mph, assuming it was hit from 70 feet away,
+// it was going 1.47*50 = 73.5 mph when hit.
+#define BOUNCE_VEL_TO_INIT 1.47
+#define MPH_TO_MM_PER_FRAME 7.4506
+#define MM_PER_FRAME_TO_MPH .134217
 #define MPH_TO_FEET_PER_SECOND (88.0 / 60.0)
-#define MM_PER_TICK_TO_FEET_PER_SECOND (MM_PER_TICK_TO_MPH * MPH_TO_FEET_PER_SECOND)
+#define MM_PER_FRAME_TO_FEET_PER_SECOND (MM_PER_FRAME_TO_MPH * MPH_TO_FEET_PER_SECOND)
 #define HALF_BALL_SIZE_MM 33.5 /*  radius of tennis ball in millimeters. */
 #define HALF_BALL_SIZE_FT .1099 // radius of tennis ball in feet.
 #define RADIANS_TO_DEGREES 57.29577951
