@@ -20,6 +20,11 @@
 #define MM_PER_FRAME_TO_MPH .134217
 #define MPH_TO_FEET_PER_SECOND (88.0 / 60.0)
 #define MM_PER_FRAME_TO_FEET_PER_SECOND (MM_PER_FRAME_TO_MPH * MPH_TO_FEET_PER_SECOND)
+
+//2 previous defines to be deleted after merge:
+#define MM_PER_TICK_TO_MPH .134217
+#define MM_PER_TICK_TO_FEET_PER_SECOND (MM_PER_TICK_TO_MPH * MPH_TO_FEET_PER_SECOND)
+
 #define HALF_BALL_SIZE_MM 33.5 /*  radius of tennis ball in millimeters. */
 #define HALF_BALL_SIZE_FT .1099 // radius of tennis ball in feet.
 #define RADIANS_TO_DEGREES 57.29577951
