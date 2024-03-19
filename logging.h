@@ -1,6 +1,10 @@
 #ifndef logging_h
 #define logging_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
   The LOG_xxx messages are written to the file /run/shm/boomer.log, and optionally to stdio.
 
@@ -57,5 +61,9 @@ void print_debug_log();
 void clear_debug_log();
 
 void save_debug_log(char*path);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //logging.h
