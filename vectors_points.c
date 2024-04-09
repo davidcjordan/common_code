@@ -196,8 +196,8 @@ float best_fit_sum_of_squares(float x[],float y[], int elements,float y_goal)
 	float slope,y_intercept,x_best;
 
 	LOG_DEBUG("elements=%d y_goal=%.2f",elements,y_goal);
-	if(elements<=0){
-		LOG_ERROR("No elements in best_fit_sum_of_squares sub");
+	if(elements<=1){
+		LOG_ERROR("Not enough elements in best_fit_sum_of_squares sub: elements=%d",elements);
 		return(0.0);
 	}
 	sum_x=sum_y=sum_xx=sum_xy=0;
