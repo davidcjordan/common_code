@@ -31,6 +31,7 @@ void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
 void dump_fault_table(void);
 uint8_t get_fault_count(void);
+bool is_fault_code_set(uint32_t code);  //returns 0 if not set, 1 if set;  location is ignored
 
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
