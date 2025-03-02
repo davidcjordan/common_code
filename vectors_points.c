@@ -150,14 +150,32 @@ void get_intersection(double ax, double ay, double bx, double by, double cx, dou
 }
 
 // This subroutine doesn't work if the lines are vertical (slope = infinity)
-void get_intersection_line(line_t a, line_t b, point_t *intersection)
+// March 1, 2025: Add error testing to code. Return 0 if okay, return 1 if no good
+int get_intersection_line(line_t a, line_t b, point_t *intersection)
 {
+  // Check to see if slope of line a is too close to infinity
+  float a_x_diff = a.end[0]->axis[X] - a.end[1]->axis[X];	// get diff in X between begin and end of line
+  if(fabs(a_x_diff) < .01) 
+  		return(1);	// NO GOOD: slope too close to infinity
+  
+  // Check to see if slope of line b is too close to infinity
+  float b_x_diff = b.end[0]->axis[X] - b.end[1]->axis[X];	// get diff in X between begin and end of b
+  if(fabs(b_x_diff) < .01) 
+  		return(1);	// NO GOOD: slope too close to infinity
+  
   float line_a_slope= (a.end[0]->axis[Y] - a.end[1]->axis[Y]) / (a.end[0]->axis[X] - a.end[1]->axis[X]);
   float line_b_slope= (b.end[0]->axis[Y] - b.end[1]->axis[Y]) / (b.end[0]->axis[X] - b.end[1]->axis[X]);
+  
+  // Check to see that slope of line a and of line b are not too close
+  float slope_diff = line_a_slope - line_b_slope;	// get diff in slope between line a and b
+  if(fabs(slope_diff) < .01) 
+  		return(1);	// NO GOOD: slopes too close to the same
+
   float line_a_constant= a.end[0]->axis[Y] - line_a_slope * a.end[0]->axis[X];
   float line_b_constant= b.end[0]->axis[Y] - line_b_slope * b.end[0]->axis[X];
-  intersection->axis[X]= (line_b_constant - line_a_constant) / (line_a_slope - line_b_slope);
+  intersection->axis[X]= (line_b_constant - line_a_constant) / slope_diff;
   intersection->axis[Y]= intersection->axis[X] * line_a_slope + line_a_constant;
+  return(0);	// GOOD VALUE: If it got this far
 }
 
 float interpolate_y_from_x(float x1, float x2, float x3, float y1, float y2){
