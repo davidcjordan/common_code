@@ -2,10 +2,6 @@
 #pragma once
 
 //-=-=- start of exported defines
-// Set software for old (off-the-shelf) hardware or new SOC hardware:
-// If USE_SOC is defined as 1, then use code in controller with the new SOC hardware
-// If USE_SOC is commented out, then use code in old controller (off-the-shelf) without the the SOC
-#define USE_SOC 1
 
 #define BOOMER_SSID "BOOM_NET"
 //#define FRAME_NUM_MAX (UINT16_MAX >> 5)
