@@ -198,7 +198,7 @@ void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[])
 		#define MAX_RESPONSE_CHARS 192
 		char response[MAX_RESPONSE_CHARS]= {0};
 		fscanf(fp,"%s",response);
-     	fclose(fp);
+     	pclose(fp);
 		// iwgetid returns BOOMNET instead of BOOM_NET, so only compare first 4 chars
 		if (strncmp(response, BOOMER_SSID, 4) == 0)
 			LOG_INFO("Network unreachable, but connected to network=%s", response);
@@ -209,7 +209,7 @@ void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[])
 			fp= popen("iwlist wlan0 scanning | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3\" \"}'","r"); 
 			memset(response, 0, MAX_RESPONSE_CHARS);
 			fgets(&response[0], MAX_RESPONSE_CHARS-1, fp);
-	     	fclose(fp);
+	     	pclose(fp);
 			LOG_INFO("Network_scan=%s", response);
 		}
 	}

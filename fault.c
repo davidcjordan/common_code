@@ -149,3 +149,14 @@ uint8_t get_fault_count(void)
       if (fault_table[i].set) fault_count++;
    return fault_count;
 }
+
+bool is_fault_code_set(uint32_t code)
+{
+   bool return_code= false;
+   for (int i = 1; ((i < FAULT_TABLE_LENGTH) && !return_code); i++) 
+   {
+      if ((fault_table[i].set == true) && (fault_table[i].code == code) )
+         return_code = true;
+   }
+   return return_code;
+}

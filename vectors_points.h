@@ -21,7 +21,7 @@ void get_intersection(double ax, double ay, double bx, double by, double cx, dou
 							 double dx, double dy, double *ix, double *iy);
 
 // This subroutine doesn't work if the lines are vertical (slope = infinity)
-void get_intersection_line(line_t a, line_t b, point_t *intersection);
+int get_intersection_line(line_t a, line_t b, point_t *intersection);
 
 float interpolate_y_from_x(float x1, float x2, float x3, float y1, float y2);
 //NOTE: the order of parameters is different than from interpolate_y_from_x

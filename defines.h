@@ -5,15 +5,42 @@
 
 #define BOOMER_SSID "BOOM_NET"
 //#define FRAME_NUM_MAX (UINT16_MAX >> 5)
+<<<<<<< HEAD
 #define FRAME_NUM_MAX (UINT32_MAX - 1)
 
+=======
+#define FRAME_NUM_MAX (INT32_MAX - 1)
+#define FEET_TO_METERS .3048
+>>>>>>> c087c694f7abbb16ec1e9f4b7e32a4d3b1a52bf8
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
 #define INCHES_TO_MM 25.4
-#define MPH_TO_MM_PER_TICK 7.4506
-#define MM_PER_TICK_TO_MPH .134217
+#define FEET_PER_SEC_TO_MPH (60/88.0)
+#define FEET_PER_FRAME_TO_MPH (60*60/88.0)
+// A tennis ball hit at 100 mph will be going roughly 73 mph 60 feet later
+// This next value guesses the initial hit velocity based on 70 Feet between hit and bounce
+// So if the bounce velocity is 50 mph, assuming it was hit from 70 feet away,
+// it was going 1.47*50 = 73.5 mph when hit.
+#define BOUNCE_VEL_TO_INIT 1.47
+#define MPH_TO_MM_PER_FRAME 7.4506
+#define MM_PER_FRAME_TO_MPH .134217
 #define MPH_TO_FEET_PER_SECOND (88.0 / 60.0)
+#define MM_PER_FRAME_TO_FEET_PER_SECOND (MM_PER_FRAME_TO_MPH * MPH_TO_FEET_PER_SECOND)
+
+//2 previous defines to be deleted after merge:
+#define MM_PER_TICK_TO_MPH .134217
 #define MM_PER_TICK_TO_FEET_PER_SECOND (MM_PER_TICK_TO_MPH * MPH_TO_FEET_PER_SECOND)
+
+#define HALF_BALL_SIZE_MM 33.5 /*  radius of tennis ball in millimeters. */
+#define HALF_BALL_SIZE_FT .1099 // radius of tennis ball in feet.
+#define RADIANS_TO_DEGREES 57.29577951
+#define DEGREES_TO_RADIANS 0.017453293
+// Camera stuff
+#define FRAME_TIME .016666667
+#define GRAVITY_IN_FEET_PER_SECOND_SQUARED 32.174
+#define CX_MID (FRAME_WIDTH / 2 - 0.5)
+#define CY_MID (FRAME_HEIGHT / 2 - 0.5)
+#define PIXEL_SIZE_MM 0.003 /* pixel size is .003 mm. */
 
 #define LEFT_DOUBLE_SIDELINE_X  -1371.6       // doubles sideline
 #define LEFT_SINGLE_SIDELINE_X  0.0           // origin of X

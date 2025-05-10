@@ -31,6 +31,7 @@ void delete_fault_entry(uint32_t code, uint8_t location);
 fault_table_entry_t * get_fault(uint32_t index);
 void dump_fault_table(void);
 uint8_t get_fault_count(void);
+bool is_fault_code_set(uint32_t code);  //returns 0 if not set, 1 if set;  location is ignored
 
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
@@ -98,6 +99,14 @@ uint8_t get_fault_count(void);
 	FAULT(CAMERA_VECTOR_GENERATION_FAILED) \
 	FAULT(SETTING_CAMERA_EXPOSURE_FAILED) \
 	FAULT(CAMERA_FOCAL_LENGTH_CALC_FAILED) \
+	FAULT(READ_CONFIG_FILE_ERROR) \
+	FAULT(NOT_PAIRED) \
+	FAULT(NOT_CONNECTED) \
+	FAULT(MOTOR_DRIVER_ERROR_ON_INITIALIZATION) \
+	FAULT(MOTOR_DRIVER_EXCESSIVE_READ_ERRORS) \
+	FAULT(MOTOR_CALIBRATION_FAILED) \
+	FAULT(MOTOR_CONFIG_FILE_ERROR) \
+	FAULT(MOTOR_NOT_DETECTED) \
 	FAULT(FAULT_END)
 
 #define FOREACH_NET_DEVICE(NET_DEVICE) \
