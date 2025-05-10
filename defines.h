@@ -4,7 +4,8 @@
 //-=-=- start of exported defines
 
 #define BOOMER_SSID "BOOM_NET"
-#define FRAME_NUM_MAX (UINT16_MAX >> 5)
+//#define FRAME_NUM_MAX (UINT16_MAX >> 5)
+#define FRAME_NUM_MAX (UINT32_MAX - 1)
 
 #define FEET_TO_MM 304.8
 #define MM_TO_FEET .00328084
