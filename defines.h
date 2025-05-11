@@ -30,23 +30,9 @@
 #define HALF_BALL_SIZE_FT .1099 // radius of tennis ball in feet.
 #define RADIANS_TO_DEGREES 57.29577951
 #define DEGREES_TO_RADIANS 0.017453293
-// CAMERA STUFF:
-
-// This define, FRAME_MICROS is the only value that needs to be set for the launcher
-// code to match the camera set pulse rate.
-// This is the only value that needs to be set for a particular camera set.
-// All other values like FRAME_NANOS, FRAME_TIME, TICK_INTERVAL, INTEGRATION_INTERVAL,
-// TWO_FRAME_TIME_MIN, TWO_FRAME_TIME_MAX, ERROR_CHECK_INTERVAL_MILLIS
-//#define FRAME_MICROS 16682 May 10, 2025: Values for CCC camera set
-//                     16655: May 10, 2025: Values for camera set #1
-// 						  16652: May 11, 2025: Values for camera set #2
-// CHANGE THIS ONE VALUE TO WORK WITH A DIFFERENT CAMERA SET. You can find the correct
-// number of micros by doing a ssh left (from the base) and then typing "blog".
-// This will show the typical value of a pulse in microseconds.
-#define FRAME_MICROS 16652
-#define FRAME_NANOS  1000*FRAME_MICROS
-#define FRAME_TIME .000001*FRAME_MICROS
-
+// Camera stuff
+//#define FRAME_TIME .016666667 // OLD value
+#define FRAME_TIME .016655
 #define GRAVITY_IN_FEET_PER_SECOND_SQUARED 32.174
 #define CX_MID (FRAME_WIDTH / 2 - 0.5)
 #define CY_MID (FRAME_HEIGHT / 2 - 0.5)
