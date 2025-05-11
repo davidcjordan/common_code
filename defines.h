@@ -150,4 +150,3 @@ enum BLOB_TYPE_ENUM {
 #ifndef MAX
 #  define MAX(a,b)  ((a) < (b) ? (b) : (a))
 #endif
-
