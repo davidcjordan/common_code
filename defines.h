@@ -45,7 +45,9 @@
 #define CENTER_SERVICE_LINE_X   4114.8        // 13.5*FEET_TO_MM
 
 // Y values (depth along court, net is origin, towards Boomer is positive )
-#define NET_Y                         0.0      // origin of Y, 0
+//#define NET_Y                         0.0      // origin of Y, 0
+// Changing NET_Y to 1.0*FEET_TO_MM
+#define NET_Y                       304.8      // 1*FEET_TO_MM. origin of Y, 0
 #define BOOMER_SERVICE_LINE_Y      6400.8      // 21*FEET_TO_MM
 #define BOOMER_BASELINE_Y         11887.2      // 39*FEET_TO_MM
 #define PLAYER_BASELINE_Y		    -11887.2      // -39*FEET_TO_MM
