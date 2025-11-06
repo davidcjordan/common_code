@@ -29,6 +29,9 @@ fault code instead of the integer.
 #include "fault.h"
 #include "string.h"
 #include "logging.h"
+#include <stdio.h> //for file operations
+
+void save_log_permanently();
 
 static const char *FAULT_STRING[] = {
     FOREACH_FAULT(GENERATE_STRING)
@@ -159,4 +162,38 @@ bool is_fault_code_set(uint32_t code)
          return_code = true;
    }
    return return_code;
+}
+
+void save_log_permanently(char*title){
+   char path_buffer[200];
+   path_buffer[199] = '\0';
+   time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+   snprintf(path_buffer,199, "/home/pi/boomer/logs/%s_%02d_%02d_%02d_%02d.log",title, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
+   LOG_DEBUG("Copying boomer.log to %s", path_buffer);
+
+   //open log file
+   FILE *logFile = fopen("/run/shm/boomer.log","r");
+	if (logFile == NULL)
+	{
+		LOG_ERROR("Error opening log: %s", "/run/shm/boomer.log");
+		return;
+	}
+
+   //open destination file
+   FILE *destFile = fopen(path_buffer,"w");
+	if (destFile == NULL)
+	{
+		LOG_ERROR("Error opening dest: %s", path_buffer);
+		return;
+	}
+   char lineBuff[1000];
+   lineBuff[999] = '\0';
+   bool res;
+   while(1){
+      res = fgets(lineBuff, 999, logFile);
+      fputs(lineBuff,destFile);
+      if(res == NULL) break;
+   }
+   LOG_DEBUG("Copy complete");
 }
