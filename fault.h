@@ -33,6 +33,8 @@ void dump_fault_table(void);
 uint8_t get_fault_count(void);
 bool is_fault_code_set(uint32_t code);  //returns 0 if not set, 1 if set;  location is ignored
 
+void save_log_permanently(char*title);
+
 #define set_fault(code, loc) { \
 	assert(code < FAULT_END); \
 	assert(loc <= FAULT_LOCATIONS); \

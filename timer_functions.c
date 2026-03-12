@@ -38,6 +38,15 @@ inline double micros() {
 	return m;
 }
 
+inline uint64_t millis_now(){ //used to determine when things happen without ambiguity of millis
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	uint64_t m;
+	m = (now.tv_sec - millis_start_time.tv_sec)*1000;
+	m += (now.tv_nsec - millis_start_time.tv_nsec)/1e6;
+	return m;
+}
+
 uint64_t counter() {
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &now);

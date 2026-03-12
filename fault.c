@@ -193,7 +193,7 @@ void save_log_permanently(char*title){
    while(1){
       res = fgets(lineBuff, 999, logFile);
       fputs(lineBuff,destFile);
-      if(res == NULL) break;
+      if(res == false) break;
    }
    LOG_DEBUG("Copy complete");
 }

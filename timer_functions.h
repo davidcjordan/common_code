@@ -19,6 +19,8 @@ void timer_update();
 
 double micros();
 
+uint64_t millis_now(); //like millis but live value when called
+
 uint64_t counter();
 
 #endif /* timer_functions_h */

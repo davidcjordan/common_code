@@ -112,6 +112,7 @@ void save_debug_log(char*path){
    fflush(pFile);
    uint32_t log_end_pos = ftell(pFile);
    uint32_t log_size = log_end_pos - log_start_pos;
+	printf("log_size=%d\n",log_size);
 	if (log_size == 0) {
 		printf("log is empty\n");
 		return;
@@ -161,7 +162,7 @@ void save_debug_log(char*path){
          perror("save_debug_log: seek to end failed");
       }
     } else {
-		LOG_ERROR("log_size of %d larger than save buffer.\n", log_size);
+		LOG_ERROR("log_size of %d larger than save buffer=1024*4096.\n", log_size);
       printf("log_size of %d larger than save buffer.\n", log_size);
    }
 }
