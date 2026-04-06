@@ -36,7 +36,8 @@
 #define GRAVITY_IN_FEET_PER_SECOND_SQUARED 32.174
 #define CX_MID (FRAME_WIDTH / 2 - 0.5)
 #define CY_MID (FRAME_HEIGHT / 2 - 0.5)
-#define PIXEL_SIZE_MM 0.003 /* pixel size is .003 mm. */
+//#define PIXEL_SIZE_MM 0.003 /* pixel size is .003 mm. */
+#define PIXEL_SIZE_MM 0.00300615 /* pixel size is .00300615 mm. */
 
 #define LEFT_DOUBLE_SIDELINE_X  -1371.6       // doubles sideline
 #define LEFT_SINGLE_SIDELINE_X  0.0           // origin of X
@@ -102,7 +103,7 @@
 //-=-=- end of exported defines
 
 typedef struct point { float axis[2];} point_t;
-typedef struct line { point_t * end[2]; } line_t;
+typedef struct line { point_t end[2]; } line_t;
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
