@@ -71,12 +71,12 @@ bool network_init(){
 
 	memset((char *) &si_me, 0, sizeof(si_me));
 	si_me.sin_family = AF_INET;
-	si_me.sin_port = htons(PORT);
+	si_me.sin_port = htons(DEFAULT_PORT);
 	si_me.sin_addr.s_addr = INADDR_ANY;
 
 	if (bind(sockfd, (struct sockaddr*) &si_me, addrlen)==-1)
 	{
-		LOG_ERROR("socket bind to port %d failed - in use by another program.", PORT);
+		LOG_ERROR("socket bind to port %d failed - in use by another program.", DEFAULT_PORT);
 		return true;
 	} 
 	// LOG_INFO("OK: Using address: %s, port: %d", ADDR_BOOMER, PORT);
@@ -84,7 +84,7 @@ bool network_init(){
 	// set address for future send_packets to send to boomer
 	memset((char *) &si_send_to, 0, sizeof(si_send_to));
 	si_send_to.sin_family = AF_INET;
-	si_send_to.sin_port = htons(PORT);
+	si_send_to.sin_port = htons(DEFAULT_PORT);
 	si_send_to.sin_addr.s_addr = inet_addr(ADDR_BOOMER);
 
 	memset((char *) &si_rcv_from, 0, sizeof(si_rcv_from));
@@ -128,8 +128,10 @@ void get_packet(){
 	strcpy(source_ip,  inet_ntoa(si_rcv_from.sin_addr));
 	return;
 }
-
-void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[])
+void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[]){
+	send_packet_no_copy_custom_port( data, length, address, DEFAULT_PORT);
+}
+void send_packet_no_copy_custom_port(uint8_t* data, uint16_t length, const char address[], uint16_t port)
 {
 	enum State {CURRENT, PREVIOUS};
 	static bool connected_state[2]= {true, true};
@@ -217,10 +219,14 @@ void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[])
 }
 
 void send_packet(uint8_t command_type, uint8_t* data, uint16_t length, const char address[]){
+	send_packet_custom_port(command_type,data, length, address, DEFAULT_PORT);
+}
+
+void send_packet_custom_port(uint8_t command_type, uint8_t* data, uint16_t length, const char address[], uint16_t port){
 	if(length > PACKET_MAX-1) length = PACKET_MAX-1;
 	buffer[0] = command_type;
 	memcpy(buffer+1,data,length);
-   send_packet_no_copy(buffer, length+1, address);
+    send_packet_no_copy_custom_port(buffer, length+1, address, port);
 }
 
 void send_string(uint8_t command_type, char* data, const char address[]){

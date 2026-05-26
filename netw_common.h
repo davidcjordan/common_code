@@ -36,7 +36,8 @@
 
 #define FRAME_CHUNK_SIZE_FOR_WIFI 2048 //used to send video frames in chunks
 
-#define PORT 11000 //all boomer devices will receive on this port
+#define DEFAULT_PORT 11000 //all boomer devices will receive on this port
+#define DEBUG_PORT 11003 //used for troubleshooting, not for normal operation, don't permanently bind to it
 #define PACKET_MAX 2304 //max for WiFi
 #define IP_ADDR_STRING_LENGTH 16
 
@@ -55,7 +56,9 @@ bool network_init(); //call once at program start, opens receive port
 void network_close(); //cleans up before exit, closes port
 void get_packet();
 void send_packet_no_copy(uint8_t* data, uint16_t length, const char address[]);
+void send_packet_no_copy_custom_port(uint8_t* data, uint16_t length, const char address[],uint16_t port);
 void send_packet(uint8_t command_type, uint8_t* data, uint16_t length, const char address[]);
+void send_packet_custom_port(uint8_t command_type, uint8_t* data, uint16_t length, const char address[],uint16_t port);
 void send_string(uint8_t command_type, char* data, const char address[]);//prototypes
 void dump_net_error_stats();
 
