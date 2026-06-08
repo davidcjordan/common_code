@@ -12,6 +12,7 @@
 #define CMD_GET_VERSION 6 //request for device (base/camera/speaker) version string
 #define CMD_GET_STATUS 7  //request for device status
 #define CMD_GET_ERROR 8   //device error info
+#define CMD_GET_STATUS_DEBUG 9
 
 #define CMD_SAVE_RESULT 34 //this packet is a response to the SAVE command
 //#define CMD_SYNC_RESULT 35 //this packet is a response to a GET_SYNC command
