@@ -95,6 +95,7 @@ void network_close(){
 	close(sockfd);
 }
 
+
 //populates char packet[] and source_ip
 //packet[0] will be null if nothing received
 void get_packet(){
@@ -221,6 +222,7 @@ void send_packet_no_copy_custom_port(uint8_t* data, uint16_t length, const char 
 void send_packet(uint8_t command_type, uint8_t* data, uint16_t length, const char address[]){
 	send_packet_custom_port(command_type,data, length, address, DEFAULT_PORT);
 }
+
 
 void send_packet_custom_port(uint8_t command_type, uint8_t* data, uint16_t length, const char address[], uint16_t port){
 	if(length > PACKET_MAX-1) length = PACKET_MAX-1;
